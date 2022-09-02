@@ -2,7 +2,7 @@ import java.sql.SQLException;
 
 public final class SpringMain {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        final UserDao dao = new MyUserDao();
+        final UserDao dao = new UserDao();
 
         final User user = new User();
         user.setId("JooSing");
