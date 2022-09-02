@@ -1,8 +1,9 @@
 import java.sql.SQLException;
 
-public final class SpringMain {
+public final class UserDaoTest {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        final UserDao dao = new UserDao();
+        final SimpleConnectionMaker simpleConnectionMaker = new SimpleConnectionMaker();
+        final UserDao dao = new UserDao(simpleConnectionMaker);
 
         final User user = new User();
         user.setId("JooSing");
