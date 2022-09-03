@@ -1,7 +1,10 @@
 public class DaoFactory {
     public UserDao userDao() {
-        final ConnectionMaker connectionMaker = new SimpleConnectionMaker();
-        final UserDao userDao = new UserDao(connectionMaker);
-        return userDao;
+        final ConnectionMaker connectionMaker = connectionMaker();
+        return new UserDao(connectionMaker);
+    }
+
+    private ConnectionMaker connectionMaker() {
+        return new SimpleConnectionMaker();
     }
 }
