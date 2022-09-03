@@ -1,10 +1,13 @@
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class DaoFactory {
     public UserDao userDao() {
         final ConnectionMaker connectionMaker = connectionMaker();
         return new UserDao(connectionMaker);
     }
 
-    private ConnectionMaker connectionMaker() {
+    public ConnectionMaker connectionMaker() {
         return new SimpleConnectionMaker();
     }
 }
