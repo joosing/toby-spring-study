@@ -2,8 +2,7 @@ import java.sql.SQLException;
 
 public final class UserDaoTest {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        final SimpleConnectionMaker simpleConnectionMaker = new SimpleConnectionMaker();
-        final UserDao dao = new UserDao(simpleConnectionMaker);
+        final UserDao dao = new DaoFactory().userDao();
 
         final User user = new User();
         user.setId("JooSing");
