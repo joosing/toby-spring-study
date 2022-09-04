@@ -24,3 +24,4 @@
 - [#9 스프링 ApplicationContext에서 DaoFactory 설정 정보로 사용하기](https://github.com/Jsing/follow-toby-spring/pull/11)
 - [#10 IoC/DI 사용하여 부가기능(참조 카운팅) 분리하기](https://github.com/Jsing/follow-spring-through-toby/pull/12)
 - [#11 XML을 이용한 설정](https://github.com/Jsing/follow-spring-through-toby/pull/13)
+- [#12 스프링에서 제공하는 DataSource 인터페이스로 전환](https://github.com/Jsing/follow-spring-through-toby/pull/14)
