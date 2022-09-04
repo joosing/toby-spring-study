@@ -9,6 +9,10 @@
 
 # 1장 오브젝트와 의존관계
 
+### 글로 정리 
+- [IoC(Inversion of Control) 현실 예제로 이해하기](https://velog.io/@joosing/understand-ioc-with-a-real-example)
+
+### 예제 코딩
 - [#1 초난감 DAO 구현의 시작](https://github.com/Jsing/follow-toby-spring/pull/2)
 - [#2 DB 연결 기능 메서드로 추출](https://github.com/Jsing/follow-toby-spring/pull/3)
 - [#3 상속 구조(템플릿 메서드 패턴, 팩토리 메서드 패턴)로 DB 연결에 대한 관심사 분리](https://github.com/Jsing/follow-toby-spring/pull/4)
