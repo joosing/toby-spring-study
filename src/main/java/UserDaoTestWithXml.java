@@ -1,7 +1,6 @@
 import java.sql.SQLException;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 public class UserDaoTestWithXml {
@@ -24,9 +23,5 @@ public class UserDaoTestWithXml {
         System.out.println(user2.getPassword());
 
         System.out.println(user2.getId() + " 조회 성공");
-
-        final CountingConnectionMaker ccm = applicationContext.getBean("connectionMaker",
-                                                                       CountingConnectionMaker.class);
-        System.out.println("Connection counter : " + ccm.getCounter());
     }
 }
