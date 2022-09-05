@@ -10,6 +10,8 @@
 # 1장 오브젝트와 의존관계
 
 ### 글로 정리 
+- [토비의 스프링 | 1장 오브젝트와 의존 관계 (책읽기 모임 나눔)](https://velog.io/@joosing/toby-spring-object-and-dependency-1-share)
+- [토비의 스프링 | 1장 오브젝트와 의존 관계 (독서메모)](https://velog.io/@joosing/toby-spring-object-and-dependency-1-memo)
 - [IoC(Inversion of Control) 현실 예제로 이해하기](https://velog.io/@joosing/understand-ioc-with-a-real-example)
 
 ### 예제 코딩 (Pull Request)
