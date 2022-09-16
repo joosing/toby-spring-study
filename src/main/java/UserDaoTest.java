@@ -19,9 +19,12 @@ public final class UserDaoTest {
         System.out.println(user.getId() + " 등록 성공");
 
         final User user2 = dao.get(user.getId());
-        System.out.println(user2.getName());
-        System.out.println(user2.getPassword());
-
-        System.out.println(user2.getId() + " 조회 성공");
+        if (!user.getName().equals(user2.getName())) {
+            System.out.println("테스트 실패 (name)");
+        } else if (!user.getPassword().equals(user2.getPassword())) {
+            System.out.println("테스트 실패 (password)");
+        } else {
+            System.out.println(user2.getId() + " 조회 성공");
+        }
     }
 }
