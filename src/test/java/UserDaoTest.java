@@ -13,20 +13,23 @@ public class UserDaoTest {
                 new GenericXmlApplicationContext("applicationContext.xml");
         final UserDao dao = applicationContext.getBean("userDao", UserDao.class);
 
+        final User expectedUser1 = new User("hi", "한주승", "hi");
+        final User expectedUser2 = new User("hey", "헤이", "hey");
+
         dao.deleteAll();
         Assert.assertEquals(0, dao.getCount());
 
-        final User expectedUser = new User();
-        expectedUser.setId("JooSing");
-        expectedUser.setName("주승");
-        expectedUser.setPassword("hello");
+        dao.add(expectedUser1);
+        dao.add(expectedUser2);
+        Assert.assertEquals(2, dao.getCount());
 
-        dao.add(expectedUser);
-        Assert.assertEquals(1, dao.getCount());
+        final User testUser = dao.get(expectedUser1.getId());
+        Assert.assertEquals(expectedUser1.getName(), testUser.getName());
+        Assert.assertEquals(expectedUser1.getId(), testUser.getId());
 
-        final User testUser = dao.get(expectedUser.getId());
-        Assert.assertEquals(expectedUser.getName(), testUser.getName());
-        Assert.assertEquals(expectedUser.getId(), testUser.getId());
+        final User testUser2 = dao.get(expectedUser2.getId());
+        Assert.assertEquals(expectedUser2.getName(), testUser2.getName());
+        Assert.assertEquals(expectedUser2.getId(), testUser2.getId());
     }
 
     @Test
