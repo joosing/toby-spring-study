@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 public class UserDaoTest {
     @Test
@@ -53,5 +54,17 @@ public class UserDaoTest {
 
         dao.add(expectedUser3);
         Assert.assertEquals(3, dao.getCount());
+    }
+
+    @Test
+    public void getUserFailure() throws Exception {
+        final ApplicationContext applicationContext =
+                new GenericXmlApplicationContext("applicationContext.xml");
+        final UserDao dao = applicationContext.getBean("userDao", UserDao.class);
+
+        dao.deleteAll();
+        Assert.assertEquals(0, dao.getCount());
+
+        Assert.assertThrows(EmptyResultDataAccessException.class, () -> dao.get("unknown_id"));
     }
 }
