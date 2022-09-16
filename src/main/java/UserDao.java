@@ -5,6 +5,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 public class UserDao {
     private DataSource dataSource;
 
@@ -38,16 +40,22 @@ public class UserDao {
                 "select * from users where id = ?");
         ps.setString(1, id);
 
+        User user = null;
         final ResultSet rs = ps.executeQuery();
-        rs.next();
-        final User user = new User();
-        user.setId(rs.getString("id"));
-        user.setName(rs.getString("name"));
-        user.setPassword(rs.getString("password"));
+        if (rs.next()) {
+            user = new User();
+            user.setId(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+        }
 
         rs.close();
         ps.close();
         c.close();
+
+        if (user == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
 
         return user;
     }
