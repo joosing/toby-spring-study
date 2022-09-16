@@ -1,5 +1,6 @@
 import java.sql.SQLException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -11,22 +12,15 @@ public class UserDaoTest {
                 new AnnotationConfigApplicationContext(DaoFactory.class);
         final UserDao dao = applicationContext.getBean("userDao", UserDao.class);
 
-        final User user = new User();
-        user.setId("JooSing");
-        user.setName("주승");
-        user.setPassword("hello");
+        final User expectedUser = new User();
+        expectedUser.setId("JooSing");
+        expectedUser.setName("주승");
+        expectedUser.setPassword("hello");
 
-        dao.add(user);
+        dao.add(expectedUser);
 
-        System.out.println(user.getId() + " 등록 성공");
-
-        final User user2 = dao.get(user.getId());
-        if (!user.getName().equals(user2.getName())) {
-            System.out.println("테스트 실패 (name)");
-        } else if (!user.getPassword().equals(user2.getPassword())) {
-            System.out.println("테스트 실패 (password)");
-        } else {
-            System.out.println(user2.getId() + " 조회 성공");
-        }
+        final User testUser = dao.get(expectedUser.getId());
+        Assert.assertEquals(expectedUser.getName(), testUser.getName());
+        Assert.assertEquals(expectedUser.getId(), testUser.getId());
     }
 }
