@@ -3,12 +3,19 @@ import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
+@ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserDaoTest {
+    @Autowired
     private UserDao dao;
 
     private User expectedUser1;
@@ -17,11 +24,6 @@ public class UserDaoTest {
 
     @Before
     public void setUp() throws SQLException {
-        // DAO 준비
-        final ApplicationContext applicationContext =
-                new GenericXmlApplicationContext("applicationContext.xml");
-        dao = applicationContext.getBean("userDao", UserDao.class);
-
         // 테이블 초기화
         dao.deleteAll();
         Assert.assertEquals(0, dao.getCount());
