@@ -25,6 +25,7 @@ public class UserDaoTest {
 
     @Before
     public void setUp() throws SQLException {
+        System.out.println(context);
         // DAO 준비
         dao = context.getBean("userDao", UserDao.class);
 
