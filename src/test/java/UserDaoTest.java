@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserDaoTest {
     @Autowired
-    private ApplicationContext context; // 테스트 오브젝트가 만들어지고 나면 스프링 테스트 컨텍스트에 의해 자동으로 값이 주입된다.
     private UserDao dao;
 
     private User expectedUser1;
@@ -25,9 +24,6 @@ public class UserDaoTest {
 
     @Before
     public void setUp() throws SQLException {
-        // DAO 준비
-        dao = context.getBean("userDao", UserDao.class);
-
         // 테이블 초기화
         dao.deleteAll();
         Assert.assertEquals(0, dao.getCount());
