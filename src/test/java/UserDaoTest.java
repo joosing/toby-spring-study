@@ -1,5 +1,7 @@
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,11 +11,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
+@DirtiesContext
 public class UserDaoTest {
     @Autowired
     private UserDao dao;
@@ -24,6 +29,11 @@ public class UserDaoTest {
 
     @Before
     public void setUp() throws SQLException {
+        // 코드에 의한 수동 DI
+        final DataSource dataSource = new SingleConnectionDataSource(
+                "jdbc:postgresql://localhost:5432/testdb", "follower", "hello", true);
+        dao.setDataSource(dataSource);
+
         // 테이블 초기화
         dao.deleteAll();
         Assert.assertEquals(0, dao.getCount());
