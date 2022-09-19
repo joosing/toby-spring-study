@@ -27,3 +27,18 @@
 - [#10 IoC/DI 사용하여 부가기능(참조 카운팅) 분리하기](https://github.com/Jsing/follow-spring-through-toby/pull/12)
 - [#11 XML을 이용한 설정](https://github.com/Jsing/follow-spring-through-toby/pull/13)
 - [#12 스프링에서 제공하는 DataSource 인터페이스로 전환](https://github.com/Jsing/follow-spring-through-toby/pull/14)
+
+# 2장 테스트
+
+### 글로 정리
+- [토비의 스프링 | 2장 테스트 (핵심 요약)](https://velog.io/@joosing/toby-spring-2-test-summary)  
+- [토비의 스프링 | 2장 테스트 (느낌점, Q&A)](https://velog.io/@joosing/toby-spring-2-test-impressive-qna-pr)  
+- [토비의 스프링 | 2장 테스트 (모임 중 든 생각, 기억에 남는 말말말)](https://velog.io/@joosing/toby-spring-2-test-words-thinking)  
+
+## 에제 코딩 (Pull Request)
+- [#1 테스트 검증의 자동화](https://github.com/Jsing/follow-spring-through-toby/pull/15)
+- [#2 테스트의 효율적인 수행과 결과관리](https://github.com/Jsing/follow-spring-through-toby/pull/16)
+- [#3 테스트 결과의 일관성](https://github.com/Jsing/follow-spring-through-toby/pull/17)
+- [#4 포괄적인 테스트](https://github.com/Jsing/follow-spring-through-toby/pull/18)
+- [#5 Before 어노테이션을 활용한 중복 준비 작업 제거](https://github.com/Jsing/follow-spring-through-toby/pull/19)
+- [#6 스프링 테스트 적용](https://github.com/Jsing/follow-spring-through-toby/pull/20)
