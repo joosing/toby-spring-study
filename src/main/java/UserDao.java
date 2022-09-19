@@ -21,68 +21,95 @@ public class UserDao {
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        final Connection c = dataSource.getConnection();
-        final PreparedStatement ps = c.prepareStatement(
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)");
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
-
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+             ){
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+            ps.executeUpdate();
+        }
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        final Connection c = dataSource.getConnection();
-        final PreparedStatement ps = c.prepareStatement(
-                "select * from users where id = ?");
-        ps.setString(1, id);
-
-        User user = null;
-        final ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
+        try (Connection c = dataSource.getConnection();
+             PreparedStatement ps = c.prepareStatement(
+                     "select * from users where id = ?");
+        ) {
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                User user = null;
+                if (rs.next()) {
+                    user = new User();
+                    user.setId(rs.getString("id"));
+                    user.setName(rs.getString("name"));
+                    user.setPassword(rs.getString("password"));
+                }
+                if (user == null) {
+                    throw new EmptyResultDataAccessException(1);
+                }
+                return user;
+            }
         }
-
-        rs.close();
-        ps.close();
-        c.close();
-
-        if (user == null) {
-            throw new EmptyResultDataAccessException(1);
-        }
-
-        return user;
     }
 
     public void deleteAll() throws SQLException {
-        final Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
 
-        final PreparedStatement ps = c.prepareStatement("delete from users");
-        ps.executeUpdate();
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("delete from users");
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (ps != null) {
+                try { // 아래에 있는 연결에 대한 close()를 위해 꼭 필요함
+                    ps.close();
+                } catch (SQLException ignored) {}
+            }
 
-        ps.close();
-        c.close();
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException ignored) {}
+            }
+        }
     }
 
     public int getCount() throws SQLException {
-        final Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        final PreparedStatement ps = c.prepareStatement("select count(*) from users");
+        try {
+            c = dataSource.getConnection();
+            ps = c.prepareStatement("select count(*) from users");
 
-        final ResultSet rs = ps.executeQuery();
-        rs.next();
-        final int count = rs.getInt(1);
-
-        rs.close();
-        ps.close();
-        c.close();
-
-        return count;
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            // 예외를 던져주는 코드를 추가해도 finally 블록이 실행되었지 참!
+            throw e;
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException ignored) {}
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException ignored) {}
+            }
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException ignored) {}
+            }
+        }
     }
 }
