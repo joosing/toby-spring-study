@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 public class UserDao {
     private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
     public UserDao() {}
 
@@ -21,8 +22,12 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
+
     public void add(User user) throws ClassNotFoundException, SQLException {
-        jdbcContextWithStatementStrategy(connection -> {
+        jdbcContext.workWithStatementStrategy(connection -> {
             final PreparedStatement ps = connection.prepareStatement("insert into users(id, name, password) values(?,?,?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
@@ -55,33 +60,7 @@ public class UserDao {
 
     public void deleteAll() throws SQLException {
         final StatementStrategy strategy = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(strategy);
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = strategy.makePreparedStatement(c);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            // 여기서 예외를 던질 필요가 없는지 체크하세요.
-            throw e;
-        } finally {
-            if (ps != null) {
-                try { // 아래에 있는 연결에 대한 close()를 위해 꼭 필요함
-                    ps.close();
-                } catch (SQLException ignored) {}
-            }
-
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException ignored) {}
-            }
-        }
+        jdbcContext.workWithStatementStrategy(strategy);
     }
 
     public int getCount() throws SQLException {
