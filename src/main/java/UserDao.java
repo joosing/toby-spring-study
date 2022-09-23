@@ -20,6 +20,8 @@ public class UserDao {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        jdbcContext = new JdbcContext(); // 인상적인 직접 생성, 수동 DI 장면이다.
+        jdbcContext.setDataSource(dataSource);
     }
 
     public void setJdbcContext(JdbcContext jdbcContext) {
