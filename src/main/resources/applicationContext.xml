@@ -10,7 +10,6 @@
   </bean>
   <bean id="userDao" class="UserDao">
     <property name="dataSource" ref="dataSource"/>
-    <property name="jdbcContext" ref="jdbcContext"/>
   </bean>
   <bean id="jdbcContext" class="JdbcContext">
     <property name="dataSource" ref="dataSource"/>
