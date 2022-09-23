@@ -80,10 +80,6 @@ public class UserDao {
         }
     }
 
-    private PreparedStatement makeStatement(Connection c, String sql) throws SQLException {
-        return c.prepareStatement(sql);
-    }
-
     public int getCount() throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
