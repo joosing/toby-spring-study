@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.sql.DataSource;
 
@@ -55,15 +56,20 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
+        final StatementStrategy strategy = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(strategy);
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
         try {
             c = dataSource.getConnection();
-            final StatementStrategy strategy = new DeleteAllStatement();
             ps = strategy.makePreparedStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
+            // 여기서 예외를 던질 필요가 없는지 체크하세요.
             throw e;
         } finally {
             if (ps != null) {
