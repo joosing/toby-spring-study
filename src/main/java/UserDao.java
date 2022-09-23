@@ -23,11 +23,6 @@ public class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
         class AddStatement implements StatementStrategy {
-            private User user;
-            AddStatement(User user) {
-                this.user = user;
-            }
-
             @Override
             public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
                 final PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -37,8 +32,7 @@ public class UserDao {
                 return ps;
             }
         }
-
-        final StatementStrategy strategy = new AddStatement(user);
+        final StatementStrategy strategy = new AddStatement();
         jdbcContextWithStatementStrategy(strategy);
     }
 
