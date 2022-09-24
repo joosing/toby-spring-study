@@ -2,6 +2,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
+import java.util.List;
 
 public class JdbcContext {
     private DataSource dataSource;
@@ -10,7 +12,21 @@ public class JdbcContext {
         this.dataSource = dataSource;
     }
 
-    public void workWithStatementStrategy(StatementStrategy strategy) throws SQLException {
+    public void executeSql(final String sql) throws SQLException {
+        workWithStatementStrategy(connection -> connection.prepareStatement(sql));
+    }
+
+    public void executeSql(final String sql, String...args) throws SQLException {
+        workWithStatementStrategy(connection -> {
+            final PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            for (int i = 0; i < args.length; i++) {
+                preparedStatement.setString(i + 1, args[i]);
+            }
+            return preparedStatement;
+        });
+    }
+
+    private void workWithStatementStrategy(StatementStrategy strategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
