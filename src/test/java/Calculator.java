@@ -3,12 +3,17 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Calculator {
-    private Integer fileReadTemplate(String filepath, BufferedReaderCallback callback) throws IOException {
+    private Integer lineReadTemplate(String filepath, LineCallback callback, Integer initValue) throws IOException {
         BufferedReader br = null;
 
         try {
             br = new BufferedReader(new FileReader(filepath));
-            return callback.doSomethingWithReader(br);
+            int value = initValue;
+            String line;
+            while ((line = br.readLine()) != null) {
+                value = callback.doSomethingWithLine(line, value);
+            }
+            return value;
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw e;
@@ -24,25 +29,11 @@ public class Calculator {
     }
 
     public Integer calSum(String filepath) throws IOException {
-        return fileReadTemplate(filepath, br -> {
-            int sum = 0;
-            String line;
-            while ((line = br.readLine()) != null) {
-                sum += Integer.valueOf(line);
-            }
-            return sum;
-        });
+        return lineReadTemplate(filepath, (line, value) -> Integer.valueOf(line) + value, 0);
     }
 
 
     public Integer calcMultiply(String filepath) throws IOException {
-        return fileReadTemplate(filepath, br -> {
-            int multiply = 1;
-            String line;
-            while ((line = br.readLine()) != null) {
-                multiply *= Integer.valueOf(line);
-            }
-            return multiply;
-        });
+        return lineReadTemplate(filepath, (line, value) -> Integer.valueOf(line) * value, 1);
     }
 }
