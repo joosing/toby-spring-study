@@ -17,4 +17,11 @@ public class CalcSumTest {
         final int sum = calculator.calcMultiply(getClass().getResource("numbers.txt").getPath());
         Assert.assertEquals(24, sum);
     }
+
+    @Test
+    public void concatenateStrings() throws IOException {
+        final Calculator calculator = new Calculator();
+        final String result = calculator.concatenate(getClass().getResource("numbers.txt").getPath());
+        Assert.assertEquals("1234", result);
+    }
 }

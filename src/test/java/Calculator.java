@@ -3,12 +3,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Calculator {
-    private Integer lineReadTemplate(String filepath, LineCallback callback, Integer initValue) throws IOException {
+    private <T> T lineReadTemplate(String filepath, LineCallback<T> callback, T initValue) throws IOException {
         BufferedReader br = null;
 
         try {
             br = new BufferedReader(new FileReader(filepath));
-            int value = initValue;
+            T value = initValue;
             String line;
             while ((line = br.readLine()) != null) {
                 value = callback.doSomethingWithLine(line, value);
@@ -32,8 +32,11 @@ public class Calculator {
         return lineReadTemplate(filepath, (line, value) -> Integer.valueOf(line) + value, 0);
     }
 
-
     public Integer calcMultiply(String filepath) throws IOException {
         return lineReadTemplate(filepath, (line, value) -> Integer.valueOf(line) * value, 1);
+    }
+
+    public String concatenate(String filepath) throws IOException {
+        return lineReadTemplate(filepath, (line, value) -> value + line, "");
     }
 }
