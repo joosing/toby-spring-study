@@ -9,36 +9,20 @@
 
 # 1장 오브젝트와 의존관계
 
-### 글로 정리 
 - [토비의 스프링 | 1장 오브젝트와 의존 관계 (책읽기 모임 나눔)](https://velog.io/@joosing/toby-spring-object-and-dependency-1-share)
 - [토비의 스프링 | 1장 오브젝트와 의존 관계 (독서메모)](https://velog.io/@joosing/toby-spring-object-and-dependency-1-memo)
 - [IoC(Inversion of Control) 현실 예제로 이해하기](https://velog.io/@joosing/understand-ioc-with-a-real-example)
 
-### 예제 코딩 (Pull Request)
-- [#1 초난감 DAO 구현의 시작](https://github.com/Jsing/follow-toby-spring/pull/2)
-- [#2 DB 연결 기능 메서드로 추출](https://github.com/Jsing/follow-toby-spring/pull/3)
-- [#3 상속 구조(템플릿 메서드 패턴, 팩토리 메서드 패턴)로 DB 연결에 대한 관심사 분리](https://github.com/Jsing/follow-toby-spring/pull/4)
-- [#4 DB 연결 기능 별도의 클래스로 분리](https://github.com/Jsing/follow-toby-spring/pull/5)
-- [#5 인터페이스 분리 (UserDao 내부에서 인터페이스 참조하도록 수정)](https://github.com/Jsing/follow-toby-spring/pull/6)
-- [#6 오브젝트의 관계를 맺는 클라이언트](https://github.com/Jsing/follow-toby-spring/pull/8)
-- [#7 UserDao 생성 책임 DaoFactory로 분리](https://github.com/Jsing/follow-toby-spring/pull/9)
-- [#8 DaoFactory 내의 ConnectionMaker 생성 중복 코드 분리](https://github.com/Jsing/follow-toby-spring/pull/10)
-- [#9 스프링 ApplicationContext에서 DaoFactory 설정 정보로 사용하기](https://github.com/Jsing/follow-toby-spring/pull/11)
-- [#10 IoC/DI 사용하여 부가기능(참조 카운팅) 분리하기](https://github.com/Jsing/follow-spring-through-toby/pull/12)
-- [#11 XML을 이용한 설정](https://github.com/Jsing/follow-spring-through-toby/pull/13)
-- [#12 스프링에서 제공하는 DataSource 인터페이스로 전환](https://github.com/Jsing/follow-spring-through-toby/pull/14)
-
 # 2장 테스트
 
-### 글로 정리
 - [토비의 스프링 | 2장 테스트 (핵심 요약)](https://velog.io/@joosing/toby-spring-2-test-summary)  
 - [토비의 스프링 | 2장 테스트 (느낌점, Q&A)](https://velog.io/@joosing/toby-spring-2-test-impressive-qna-pr)  
 - [토비의 스프링 | 2장 테스트 (모임 중 든 생각, 기억에 남는 말말말)](https://velog.io/@joosing/toby-spring-2-test-words-thinking)  
 
-## 에제 코딩 (Pull Request)
-- [#1 테스트 검증의 자동화](https://github.com/Jsing/follow-spring-through-toby/pull/15)
-- [#2 테스트의 효율적인 수행과 결과관리](https://github.com/Jsing/follow-spring-through-toby/pull/16)
-- [#3 테스트 결과의 일관성](https://github.com/Jsing/follow-spring-through-toby/pull/17)
-- [#4 포괄적인 테스트](https://github.com/Jsing/follow-spring-through-toby/pull/18)
-- [#5 Before 어노테이션을 활용한 중복 준비 작업 제거](https://github.com/Jsing/follow-spring-through-toby/pull/19)
-- [#6 스프링 테스트 적용](https://github.com/Jsing/follow-spring-through-toby/pull/20)
+# 3장 템플릿
+
+- [토비의 스프링 | 3장 템플릿 (생각나눔)](https://velog.io/@joosing/toby-spring-3-template-share)
+- [토비의 스프링 | 변하는 것과 변하지 않는 것을 분리하는 과정](https://velog.io/@joosing/toby-spring-3-process-of-separating-changing-from-unchanging)
+- [콜백을 위해 항상 람다식을 전달하는게 좋나요?](https://velog.io/@joosing/pass-lambda-expression-for-callbacks)
+- [토비의 스프링 | 3장 템플릿 (모임 중 든 생각, 기억에 남는 말말말](https://velog.io/@joosing/toby-spring-3-template-thinking-words)
+- [토비의 스프링 | 3장 템플릿 (독서메모)](https://velog.io/@joosing/toby-spring-3-template-read-memo)
