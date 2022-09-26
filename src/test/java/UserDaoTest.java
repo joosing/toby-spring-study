@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,9 +30,9 @@ public class UserDaoTest {
         Assert.assertEquals(0, dao.getCount());
 
         // User Fixture 생성
-        expectedUser1 = new User("hello", "한주승", "hello");
-        expectedUser2 = new User("hey", "헤이", "hey");
-        expectedUser3 = new User("hi", "하이", "hi");
+        expectedUser1 = new User("gyumee", "한주승", "hello");
+        expectedUser2 = new User("leegw700", "헤이", "hey");
+        expectedUser3 = new User("bumjin", "하이", "hi");
     }
 
     @Test
@@ -47,6 +48,36 @@ public class UserDaoTest {
         final User testUser2 = dao.get(expectedUser2.getId());
         Assert.assertEquals(expectedUser2.getName(), testUser2.getName());
         Assert.assertEquals(expectedUser2.getId(), testUser2.getId());
+    }
+
+    @Test
+    public void getAll() throws Exception {
+        final List<User> users0 = dao.getAll();
+        Assert.assertEquals(0, users0.size());
+
+        dao.add(expectedUser1);
+        final List<User> users1 = dao.getAll();
+        Assert.assertEquals(1, users1.size());
+        checkSameUser(expectedUser1, users1.get(0));
+
+        dao.add(expectedUser2);
+        final List<User> users2 = dao.getAll();
+        Assert.assertEquals(2, users2.size());
+        checkSameUser(expectedUser1, users2.get(0));
+        checkSameUser(expectedUser2, users2.get(1));
+
+        dao.add(expectedUser3);
+        final List<User> users3 = dao.getAll();
+        Assert.assertEquals(3, users3.size());
+        checkSameUser(expectedUser3, users3.get(0));
+        checkSameUser(expectedUser1, users3.get(1));
+        checkSameUser(expectedUser2, users3.get(2));
+    }
+
+    private void checkSameUser(User user1, User user2) {
+        Assert.assertEquals(user1.getId(), user2.getId());
+        Assert.assertEquals(user1.getName(), user2.getName());
+        Assert.assertEquals(user1.getPassword(), user2.getPassword());
     }
 
     @Test

@@ -2,94 +2,47 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 public class UserDao {
-    private DataSource dataSource;
-    private JdbcContext jdbcContext;
-
-    public UserDao() {}
-
-    public UserDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private JdbcTemplate jdbcTemplate;
+    private final RowMapper<User> userMapper = (rs, rowNum) -> {
+        final User user = new User();
+        user.setId(rs.getString("id"));
+        user.setName(rs.getString("name"));
+        user.setPassword(rs.getString("password"));
+        return user;
+    };
 
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-        jdbcContext = new JdbcContext(); // 인상적인 직접 생성, 수동 DI 장면이다.
-        jdbcContext.setDataSource(dataSource);
-    }
-
-    public void setJdbcContext(JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
+        jdbcTemplate = new JdbcTemplate(); // 인상적인 직접 생성, 수동 DI 장면이다.
+        jdbcTemplate.setDataSource(dataSource);
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        jdbcContext.executeSql("insert into users(id, name, password) values(?,?,?)",
+        jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
                                user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        try (Connection c = dataSource.getConnection();
-             PreparedStatement ps = c.prepareStatement(
-                     "select * from users where id = ?")
-        ) {
-            ps.setString(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                User user = null;
-                if (rs.next()) {
-                    user = new User();
-                    user.setId(rs.getString("id"));
-                    user.setName(rs.getString("name"));
-                    user.setPassword(rs.getString("password"));
-                }
-                if (user == null) {
-                    throw new EmptyResultDataAccessException(1);
-                }
-                return user;
-            }
-        }
+        return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id);
+    }
+
+    public List<User> getAll() {
+        return jdbcTemplate.query("select * from users order by id", userMapper);
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.executeSql("delete from users");
+        jdbcTemplate.update("delete from users");
     }
 
     public int getCount() throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("select count(*) from users");
-
-            rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            // 예외를 던져주는 코드를 추가해도 finally 블록이 실행되었지 참!
-            throw e;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignored) {}
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignored) {}
-            }
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException ignored) {}
-            }
-        }
+        return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
     }
 }
