@@ -25,12 +25,12 @@ public class UserDao {
         jdbcTemplate.setDataSource(dataSource);
     }
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
+    public void add(User user) {
         jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
                                user.getId(), user.getName(), user.getPassword());
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException {
+    public User get(String id) {
         return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id);
     }
 
@@ -38,7 +38,7 @@ public class UserDao {
         return jdbcTemplate.query("select * from users order by id", userMapper);
     }
 
-    public void deleteAll() throws SQLException {
+    public void deleteAll() {
         jdbcTemplate.update("delete from users");
     }
 
