@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -92,5 +94,13 @@ public class UserDaoTest {
     @Test
     public void getUserFailure() throws Exception {
         Assert.assertThrows(EmptyResultDataAccessException.class, () -> dao.get("unknown_id"));
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void duplicatedKey() {
+        dao.deleteAll();
+
+        dao.add(expectedUser1);
+        dao.add(expectedUser1);
     }
 }
