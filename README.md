@@ -26,3 +26,9 @@
 - [콜백을 위해 항상 람다식을 전달하는게 좋나요?](https://velog.io/@joosing/pass-lambda-expression-for-callbacks)
 - [토비의 스프링 | 3장 템플릿 (모임 중 든 생각, 기억에 남는 말말말](https://velog.io/@joosing/toby-spring-3-template-thinking-words)
 - [토비의 스프링 | 3장 템플릿 (독서메모)](https://velog.io/@joosing/toby-spring-3-template-read-memo)
+
+# 4장 예외
+
+- [토비의 스프링 | 4장 예외 (배우고 느낀점)](https://velog.io/@joosing/toby-spring-4-exception-learn-and-thoughts)
+- [토비의 스프링 | 4장 예외 (독서메모)](https://velog.io/@joosing/toby-spring-4-exception-summary)
+- [토비의 스프링 | 4장 예외 (생각거리, 기억에 남는 말)](https://velog.io/@joosing/toby-spring-4-exception-after-meeting)
