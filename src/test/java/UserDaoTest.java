@@ -35,9 +35,9 @@ public class UserDaoTest {
         Assert.assertEquals(0, dao.getCount());
 
         // User Fixture 생성
-        expectedUser1 = new User("gyumee", "한주승", "hello");
-        expectedUser2 = new User("leegw700", "헤이", "hey");
-        expectedUser3 = new User("bumjin", "하이", "hi");
+        expectedUser1 = new User("gyumee", "한주승", "hello", Level.BASIC, 1, 0);
+        expectedUser2 = new User("leegw700", "헤이", "hey", Level.SILVER, 55, 10);
+        expectedUser3 = new User("bumjin", "하이", "hi", Level.GOLD, 100, 40);
     }
 
     @Test
@@ -83,6 +83,9 @@ public class UserDaoTest {
         Assert.assertEquals(user1.getId(), user2.getId());
         Assert.assertEquals(user1.getName(), user2.getName());
         Assert.assertEquals(user1.getPassword(), user2.getPassword());
+        Assert.assertEquals(user1.getLevel(), user2.getLevel());
+        Assert.assertEquals(user1.getLogin(), user2.getLogin());
+        Assert.assertEquals(user1.getRecommand(), user2.getRecommand());
     }
 
     @Test
