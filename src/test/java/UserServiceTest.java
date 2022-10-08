@@ -21,6 +21,8 @@ public class UserServiceTest {
 
     @Before
     public void setUp() {
+        userDao.deleteAll();
+
         users = Arrays.asList(
                 new User("bumjini", "박범진", "p1", Level.BASIC, 49, 0),
                 new User("joytouch", "강명성", "p2", Level.BASIC, 50, 0),
@@ -31,8 +33,31 @@ public class UserServiceTest {
     }
 
     @Test
+    public void addWithLevel() {
+        final User user = users.get(4);
+
+        final Level levelBefore = user.getLevel();
+        userService.add(user);
+        Assert.assertEquals(levelBefore, user.getLevel());
+
+        final User userRead = userDao.get(user.getId());
+        Assert.assertEquals(levelBefore, userRead.getLevel());
+    }
+
+    @Test
+    public void addWithoutLevel() {
+        final User user = users.get(0);
+        user.setLevel(null);
+
+        userService.add(user);
+        Assert.assertEquals(Level.BASIC, user.getLevel());
+
+        final User userRead = userDao.get(user.getId());
+        Assert.assertEquals(Level.BASIC, userRead.getLevel());
+    }
+
+    @Test
     public void upgradeLevels() {
-        userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
 
         userService.upgradeLevels();
