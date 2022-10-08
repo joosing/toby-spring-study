@@ -13,5 +13,14 @@ public class User {
     private String password;
     private Level level;
     private int login;
-    private int recommand;
+    private int recommend;
+
+    public void upgradeLevel() {
+        final Level nextLevel = level.nextLevel();
+        if (nextLevel == null) {
+            throw new IllegalStateException(level + "은 업그레이드가 불가능합니다.");
+        } else {
+            level = nextLevel;
+        }
+    }
 }
