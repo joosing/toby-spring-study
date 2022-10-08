@@ -14,6 +14,7 @@ public class User {
     private Level level;
     private int login;
     private int recommend;
+    private String email;
 
     public void upgradeLevel() {
         final Level nextLevel = level.nextLevel();
