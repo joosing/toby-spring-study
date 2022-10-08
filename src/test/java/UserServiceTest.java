@@ -1,3 +1,4 @@
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +23,6 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         userDao.deleteAll();
-
         users = Arrays.asList(
                 new User("bumjini", "박범진", "p1", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
                 new User("joytouch", "강명성", "p2", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER, 0),
@@ -57,24 +57,65 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         users.forEach(user -> userDao.add(user));
 
         userService.upgradeLevels();
 
-        checkLevel(users.get(0), false);
-        checkLevel(users.get(1), true);
-        checkLevel(users.get(2), false);
-        checkLevel(users.get(3), true);
-        checkLevel(users.get(4), false);
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
     }
 
-    private void checkLevel(User user, boolean upgraded) {
+    @Test
+    public void upgradeAllOrNothing() throws Exception {
+        final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
+        policy.setUserDao(userDao);
+        userService.setUserLevelUpgradePolicy(policy);
+
+        users.forEach(user -> userDao.add(user));
+
+        try {
+            userService.upgradeLevels();
+            Assert.fail("TestUserServiceException expected");
+        } catch (TestUserServiceException ex) {
+
+        } finally {
+            final GeneralUserLevelUpgradePolicy originPolicy = new GeneralUserLevelUpgradePolicy();
+            originPolicy.setUserDao(userDao);
+            userService.setUserLevelUpgradePolicy(originPolicy);
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    private void checkLevelUpgraded(User user, boolean upgraded) {
         final User userUpdated = userDao.get(user.getId());
         if (upgraded) {
             Assert.assertEquals(user.getLevel().nextLevel(), userUpdated.getLevel());
         } else {
             Assert.assertEquals(user.getLevel(), userUpdated.getLevel());
         }
+    }
+
+    static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
+        private final String id;
+
+        TestUserLevelUpgradePolicy(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void upgrade(User user) {
+            if (user.getId().equals(id)) {throw new TestUserServiceException();}
+            super.upgrade(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
+        @Serial
+        private static final long serialVersionUID = -1962780078733550838L;
     }
 }
