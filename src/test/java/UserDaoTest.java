@@ -55,6 +55,22 @@ public class UserDaoTest {
     }
 
     @Test
+    public void updateTest() {
+        dao.add(user1);
+
+        user1.setName("오민규");
+        user1.setPassword("hello2");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(999);
+        user1.setRecommand(888);
+
+        dao.update(user1);
+
+        User user1update = dao.get(user1.getId());
+        checkSameUser(user1, user1update);
+    }
+
+    @Test
     public void getAll() throws Exception {
         final List<User> users0 = dao.getAll();
         Assert.assertEquals(0, users0.size());
