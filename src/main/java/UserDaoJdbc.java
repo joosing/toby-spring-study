@@ -1,12 +1,7 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -19,7 +14,7 @@ public class UserDaoJdbc implements UserDao{
         user.setPassword(rs.getString("password"));
         user.setLevel(Level.valueOf(rs.getInt("level")));
         user.setLogin(rs.getInt("login"));
-        user.setRecommand(rs.getInt("recommend"));
+        user.setRecommend(rs.getInt("recommend"));
         return user;
     };
 
@@ -32,7 +27,7 @@ public class UserDaoJdbc implements UserDao{
     public void add(User user) {
         jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)",
                             user.getId(), user.getName(), user.getPassword(),
-                            user.getLevel().intValue(), user.getLogin(), user.getRecommand()
+                            user.getLevel().intValue(), user.getLogin(), user.getRecommend()
         );
     }
 
@@ -47,7 +42,7 @@ public class UserDaoJdbc implements UserDao{
                                 update users set name = ?, password = ?, level = ?,
                                 login = ?, recommend = ? where id = ?""",
                                 user.getName(), user.getPassword(), user.getLevel().intValue(),
-                                user.getLogin(), user.getRecommand(),
+                                user.getLogin(), user.getRecommend(),
                                 user.getId());
     }
 

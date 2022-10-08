@@ -63,7 +63,7 @@ public class UserDaoTest {
         user1.setPassword("hello2");
         user1.setLevel(Level.GOLD);
         user1.setLogin(999);
-        user1.setRecommand(888);
+        user1.setRecommend(888);
 
         dao.update(user1);
 
@@ -103,7 +103,7 @@ public class UserDaoTest {
         Assert.assertEquals(user1.getPassword(), user2.getPassword());
         Assert.assertEquals(user1.getLevel(), user2.getLevel());
         Assert.assertEquals(user1.getLogin(), user2.getLogin());
-        Assert.assertEquals(user1.getRecommand(), user2.getRecommand());
+        Assert.assertEquals(user1.getRecommend(), user2.getRecommend());
     }
 
     @Test
