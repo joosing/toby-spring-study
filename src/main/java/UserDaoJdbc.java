@@ -28,6 +28,7 @@ public class UserDaoJdbc implements UserDao{
         jdbcTemplate.setDataSource(dataSource);
     }
 
+    @Override
     public void add(User user) {
         jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)",
                             user.getId(), user.getName(), user.getPassword(),
@@ -35,18 +36,32 @@ public class UserDaoJdbc implements UserDao{
         );
     }
 
+    @Override
     public User get(String id) {
         return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id);
     }
 
+    @Override
+    public void update(User user) {
+        jdbcTemplate.update("""
+                                update users set name = ?, password = ?, level = ?,
+                                login = ?, recommend = ? where id = ?""",
+                                user.getName(), user.getPassword(), user.getLevel().intValue(),
+                                user.getLogin(), user.getRecommand(),
+                                user.getId());
+    }
+
+    @Override
     public List<User> getAll() {
         return jdbcTemplate.query("select * from users order by id", userMapper);
     }
 
+    @Override
     public void deleteAll() {
         jdbcTemplate.update("delete from users");
     }
 
+    @Override
     public int getCount() {
         return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
     }
