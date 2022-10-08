@@ -1,23 +1,23 @@
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class UserService {
-    private DataSource dataSource;
     private UserDao userDao;
+    private PlatformTransactionManager transactionManager;
     private UserLevelUpgradePolicy userLevelUpgradePolicy;
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
@@ -25,10 +25,7 @@ public class UserService {
     }
 
     public void upgradeLevels() throws Exception {
-        TransactionSynchronizationManager.initSynchronization();
-        final Connection c = DataSourceUtils.getConnection(dataSource);
-        c.setAutoCommit(false);
-
+        final TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             final List<User> users = userDao.getAll();
             for (User user : users) {
@@ -36,16 +33,11 @@ public class UserService {
                     userLevelUpgradePolicy.upgrade(user);
                 }
             }
-            c.commit();
+            transactionManager.commit(status);
         } catch (Exception ex) {
-            c.rollback();
+            transactionManager.rollback(status);
             throw ex;
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource);
-            TransactionSynchronizationManager.unbindResource(dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
-
     }
 
     public void add(User user) {
