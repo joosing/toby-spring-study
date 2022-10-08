@@ -82,6 +82,10 @@ public class UserServiceTest {
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
+        } finally {
+            final GeneralUserLevelUpgradePolicy originPolicy = new GeneralUserLevelUpgradePolicy();
+            originPolicy.setUserDao(userDao);
+            userService.setUserLevelUpgradePolicy(originPolicy);
         }
 
         checkLevelUpgraded(users.get(1), false);
