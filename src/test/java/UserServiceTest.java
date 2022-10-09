@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -17,6 +18,8 @@ public class UserServiceTest {
     UserService userService;
     @Autowired
     UserDao userDao;
+    @Autowired
+    MailSender mailSender;
 
     List<User> users; // 테스트 픽스처
 
@@ -73,6 +76,7 @@ public class UserServiceTest {
     public void upgradeAllOrNothing() throws Exception {
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
+        policy.setMailSender(mailSender);
         userService.setUserLevelUpgradePolicy(policy);
 
         users.forEach(user -> userDao.add(user));
