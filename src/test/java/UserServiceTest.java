@@ -7,9 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import service.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
@@ -19,13 +21,16 @@ public class UserServiceTest {
     @Autowired
     UserDao userDao;
     @Autowired
-    MailSender mailSender;
+    MockMailSender mailSender;
+    @Autowired
+    UserLevelUpgradePolicy levelUpgradePolicy;
 
     List<User> users; // 테스트 픽스처
 
     @Before
     public void setUp() {
         userDao.deleteAll();
+        mailSender.clear();
         users = Arrays.asList(
                 new User("bumjini", "박범진", "p1", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER - 1, 0, "joosing711@gmail.com"),
                 new User("joytouch", "강명성", "p2", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER, 0, "joosing711@gmail.com"),
@@ -60,6 +65,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeLevels() throws Exception {
         users.forEach(user -> userDao.add(user));
 
@@ -70,6 +76,12 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(2), false);
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
+
+        final List<String> request = mailSender.getRequests();
+        System.out.println(request.size());
+        Assert.assertEquals(2, request.size());
+        Assert.assertEquals(users.get(1).getEmail(), request.get(0));
+        Assert.assertEquals(users.get(3).getEmail(), request.get(1));
     }
 
     @Test
@@ -89,6 +101,7 @@ public class UserServiceTest {
         } finally {
             final GeneralUserLevelUpgradePolicy originPolicy = new GeneralUserLevelUpgradePolicy();
             originPolicy.setUserDao(userDao);
+            originPolicy.setMailSender(mailSender);
             userService.setUserLevelUpgradePolicy(originPolicy);
         }
 
