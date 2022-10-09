@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import service.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
@@ -17,18 +20,23 @@ public class UserServiceTest {
     UserService userService;
     @Autowired
     UserDao userDao;
+    @Autowired
+    MockMailSender mailSender;
+    @Autowired
+    UserLevelUpgradePolicy levelUpgradePolicy;
 
     List<User> users; // 테스트 픽스처
 
     @Before
     public void setUp() {
         userDao.deleteAll();
+        mailSender.clear();
         users = Arrays.asList(
-                new User("bumjini", "박범진", "p1", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
-                new User("joytouch", "강명성", "p2", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER, 0),
-                new User("erwins", "신승한", "p3", Level.SILVER, 60, GeneralUserLevelUpgradePolicy.MIN_RECOMMEND_COUNT_FOR_GOLD-1),
-                new User("madnite1", "이상호", "p4", Level.SILVER, 60, GeneralUserLevelUpgradePolicy.MIN_RECOMMEND_COUNT_FOR_GOLD),
-                new User("green", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+                new User("bumjini", "박범진", "p1", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER - 1, 0, "joosing711@gmail.com"),
+                new User("joytouch", "강명성", "p2", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER, 0, "joosing711@gmail.com"),
+                new User("erwins", "신승한", "p3", Level.SILVER, 60, GeneralUserLevelUpgradePolicy.MIN_RECOMMEND_COUNT_FOR_GOLD-1, "joosing711@gmail.com"),
+                new User("madnite1", "이상호", "p4", Level.SILVER, 60, GeneralUserLevelUpgradePolicy.MIN_RECOMMEND_COUNT_FOR_GOLD, "joosing711@gmail.com"),
+                new User("green", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE, "joosing711@gmail.com")
         );
     }
 
@@ -57,6 +65,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeLevels() throws Exception {
         users.forEach(user -> userDao.add(user));
 
@@ -67,12 +76,19 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(2), false);
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
+
+        final List<String> request = mailSender.getRequests();
+        System.out.println(request.size());
+        Assert.assertEquals(2, request.size());
+        Assert.assertEquals(users.get(1).getEmail(), request.get(0));
+        Assert.assertEquals(users.get(3).getEmail(), request.get(1));
     }
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
+        policy.setMailSender(mailSender);
         userService.setUserLevelUpgradePolicy(policy);
 
         users.forEach(user -> userDao.add(user));
@@ -85,6 +101,7 @@ public class UserServiceTest {
         } finally {
             final GeneralUserLevelUpgradePolicy originPolicy = new GeneralUserLevelUpgradePolicy();
             originPolicy.setUserDao(userDao);
+            originPolicy.setMailSender(mailSender);
             userService.setUserLevelUpgradePolicy(originPolicy);
         }
 

@@ -34,9 +34,9 @@ public class UserDaoTest {
         Assert.assertEquals(0, dao.getCount());
 
         // User Fixture 생성
-        user1 = new User("gyumee", "한주승", "hello", Level.BASIC, 1, 0);
-        user2 = new User("leegw700", "헤이", "hey", Level.SILVER, 55, 10);
-        user3 = new User("bumjin", "하이", "hi", Level.GOLD, 100, 40);
+        user1 = new User("gyumee", "한주승", "hello", Level.BASIC, 1, 0, "joosing711@gmail.com");
+        user2 = new User("leegw700", "헤이", "hey", Level.SILVER, 55, 10, "joosing711@gmail.com");
+        user3 = new User("bumjin", "하이", "hi", Level.GOLD, 100, 40, "joosing711@gmail.com");
     }
 
     @Test
@@ -64,12 +64,13 @@ public class UserDaoTest {
         user1.setLevel(Level.GOLD);
         user1.setLogin(999);
         user1.setRecommend(888);
+        user1.setEmail("joosing711@naver.com");
 
         dao.update(user1);
 
-        User user1update = dao.get(user1.getId());
+        final User user1update = dao.get(user1.getId());
         checkSameUser(user1, user1update);
-        User user2update = dao.get(user2.getId());
+        final User user2update = dao.get(user2.getId());
         checkSameUser(user2, user2update);
     }
 
@@ -104,6 +105,7 @@ public class UserDaoTest {
         Assert.assertEquals(user1.getLevel(), user2.getLevel());
         Assert.assertEquals(user1.getLogin(), user2.getLogin());
         Assert.assertEquals(user1.getRecommend(), user2.getRecommend());
+        Assert.assertEquals(user1.getEmail(), user2.getEmail());
     }
 
     @Test
