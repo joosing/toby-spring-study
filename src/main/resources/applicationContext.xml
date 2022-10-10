@@ -19,9 +19,12 @@
     <property name="userDao" ref="userDao"/>
     <property name="mailSender" ref="mailSender"/>
   </bean>
-  <bean id="userService" class="service.UserService">
-    <property name="userDao" ref="userDao"/>
+  <bean id="userService" class="service.UserServiceTx">
     <property name="transactionManager" ref="transactionManager"/>
+    <property name="userService" ref="userServiceImpl"/>
+  </bean>
+  <bean id="userServiceImpl" class="service.UserServiceImpl">
+    <property name="userDao" ref="userDao"/>
     <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
   </bean>
 </beans>
