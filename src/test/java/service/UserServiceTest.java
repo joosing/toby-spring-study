@@ -85,8 +85,8 @@ public class UserServiceTest {
         final UserLevelUpgradePolicy testUpgradePolicy = new GeneralUserLevelUpgradePolicy();
         testUserService.setUserLevelUpgradePolicy(testUpgradePolicy);
 
-        final UserDao mockUserDao = Mockito.mock(UserDao.class);
-        Mockito.when(mockUserDao.getAll()).thenReturn(users);
+        final UserDao mockUserDao = Mockito.mock(UserDao.class); // 1. 스프링 빈이 아닌 경우에도 Mock 프레임워크 지원을 받을 수 있다.
+        Mockito.when(mockUserDao.getAll()).thenReturn(users); // 2. Mock 객체의 반환 값을 의도한 값으로 고정하 수 있다.
         testUserService.setUserDao(mockUserDao);
         testUpgradePolicy.setUserDao(mockUserDao);
 
@@ -97,14 +97,14 @@ public class UserServiceTest {
         testUserService.upgradeLevels();
 
         // Then
-        Mockito.verify(mockUserDao, Mockito.times(2)).update(any(User.class)); // 1. 특정 타입 객체와 함꼐 호출도니 메서드 횟수 검증
-        Mockito.verify(mockUserDao).update(users.get(1)); // 2. 특정 객체와 함께 호출된 메서드 검증
+        Mockito.verify(mockUserDao, Mockito.times(2)).update(any(User.class)); // 3. 특정 타입 객체를 파라미터로 Mock 객체 메서드가 호출된 횟수 검증
+        Mockito.verify(mockUserDao).update(users.get(1)); // 4. 특정 객체를 파라미터로 Mock 객체 메서드가 호출되었는지 검증
         Assert.assertEquals(Level.SILVER, users.get(1).getLevel());
         Mockito.verify(mockUserDao).update(users.get(3));
         Assert.assertEquals(Level.GOLD, users.get(3).getLevel());
 
         final ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
-        Mockito.verify(mockMailSender, Mockito.times(2)).send(mailMessageArg.capture()); // 3. 메서드 호출과 함께 전달된 파라미터 캡처
+        Mockito.verify(mockMailSender, Mockito.times(2)).send(mailMessageArg.capture()); // 5. Mock 객체 메서드로 전달된 파라미터를 캡처해서 검증
         final List<SimpleMailMessage> allValues = mailMessageArg.getAllValues();
         Assert.assertEquals(users.get(1).getEmail(), Objects.requireNonNull(allValues.get(0).getTo())[0]);
         Assert.assertEquals(users.get(3).getEmail(), Objects.requireNonNull(allValues.get(1).getTo())[0]);
