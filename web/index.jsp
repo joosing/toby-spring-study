@@ -1,6 +1,6 @@
 <%--
   Created by IntelliJ IDEA.
-  User: gkswn
+  pojo.User: gkswn
   Date: 2022-08-30
   Time: 오전 6:15
   To change this template use File | Settings | File Templates.

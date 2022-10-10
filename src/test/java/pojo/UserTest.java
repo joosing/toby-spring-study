@@ -1,6 +1,10 @@
+package pojo;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import service.Level;
 
 public class UserTest {
     User user;
