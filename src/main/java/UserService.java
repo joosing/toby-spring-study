@@ -1,8 +1,5 @@
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -27,16 +24,20 @@ public class UserService {
     public void upgradeLevels() throws Exception {
         final TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            final List<User> users = userDao.getAll();
-            for (User user : users) {
-                if (userLevelUpgradePolicy.can(user)) {
-                    userLevelUpgradePolicy.upgrade(user);
-                }
-            }
+            upgradeLevelsInternal();
             transactionManager.commit(status);
         } catch (Exception ex) {
             transactionManager.rollback(status);
             throw ex;
+        }
+    }
+
+    private void upgradeLevelsInternal() throws Exception {
+        final List<User> users = userDao.getAll();
+        for (User user : users) {
+            if (userLevelUpgradePolicy.can(user)) {
+                userLevelUpgradePolicy.upgrade(user);
+            }
         }
     }
 
