@@ -1,16 +1,22 @@
 package service;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -69,6 +75,39 @@ public class UserServiceTest {
 
         final User userRead = userDao.get(user.getId());
         Assert.assertEquals(Level.BASIC, userRead.getLevel());
+    }
+
+    @Test
+    public void mockUpgradeLevels() {
+        // Given
+        final UserServiceImpl testUserService = new UserServiceImpl();
+
+        final UserLevelUpgradePolicy testUpgradePolicy = new GeneralUserLevelUpgradePolicy();
+        testUserService.setUserLevelUpgradePolicy(testUpgradePolicy);
+
+        final UserDao mockUserDao = Mockito.mock(UserDao.class);
+        Mockito.when(mockUserDao.getAll()).thenReturn(users);
+        testUserService.setUserDao(mockUserDao);
+        testUpgradePolicy.setUserDao(mockUserDao);
+
+        final MailSender mockMailSender = Mockito.mock(MailSender.class);
+        testUpgradePolicy.setMailSender(mockMailSender);
+
+        // When
+        testUserService.upgradeLevels();
+
+        // Then
+        Mockito.verify(mockUserDao, Mockito.times(2)).update(any(User.class)); // 1. 특정 타입 객체와 함꼐 호출도니 메서드 횟수 검증
+        Mockito.verify(mockUserDao).update(users.get(1)); // 2. 특정 객체와 함께 호출된 메서드 검증
+        Assert.assertEquals(Level.SILVER, users.get(1).getLevel());
+        Mockito.verify(mockUserDao).update(users.get(3));
+        Assert.assertEquals(Level.GOLD, users.get(3).getLevel());
+
+        final ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        Mockito.verify(mockMailSender, Mockito.times(2)).send(mailMessageArg.capture()); // 3. 메서드 호출과 함께 전달된 파라미터 캡처
+        final List<SimpleMailMessage> allValues = mailMessageArg.getAllValues();
+        Assert.assertEquals(users.get(1).getEmail(), Objects.requireNonNull(allValues.get(0).getTo())[0]);
+        Assert.assertEquals(users.get(3).getEmail(), Objects.requireNonNull(allValues.get(1).getTo())[0]);
     }
 
     @Test
