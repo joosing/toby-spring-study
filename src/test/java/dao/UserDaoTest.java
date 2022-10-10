@@ -1,3 +1,5 @@
+package dao;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,6 +16,9 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import pojo.User;
+import service.Level;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
@@ -33,7 +38,7 @@ public class UserDaoTest {
         dao.deleteAll();
         Assert.assertEquals(0, dao.getCount());
 
-        // User Fixture 생성
+        // dto.User Fixture 생성
         user1 = new User("gyumee", "한주승", "hello", Level.BASIC, 1, 0, "joosing711@gmail.com");
         user2 = new User("leegw700", "헤이", "hey", Level.SILVER, 55, 10, "joosing711@gmail.com");
         user3 = new User("bumjin", "하이", "hi", Level.GOLD, 100, 40, "joosing711@gmail.com");

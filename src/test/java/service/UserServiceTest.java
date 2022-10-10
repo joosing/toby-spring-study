@@ -1,3 +1,5 @@
+package service;
+
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +11,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import service.MockMailSender;
+import dao.UserDao;
+import pojo.User;
+import service.mock.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
@@ -22,7 +27,7 @@ public class UserServiceTest {
     @Autowired
     MockMailSender mailSender;
     @Autowired
-    UserLevelUpgradePolicy levelUpgradePolicy;
+    PlatformTransactionManager transactionManager;
 
     List<User> users; // 테스트 픽스처
 
@@ -87,20 +92,22 @@ public class UserServiceTest {
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
-        userService.setUserLevelUpgradePolicy(policy);
+
+        final UserServiceImpl testUserServiceImpl = new UserServiceImpl();
+        testUserServiceImpl.setUserDao(userDao);
+        testUserServiceImpl.setUserLevelUpgradePolicy(policy);
+
+        final UserServiceTx txUserService = new UserServiceTx();
+        txUserService.setUserService(testUserServiceImpl);
+        txUserService.setTransactionManager(transactionManager);
 
         users.forEach(user -> userDao.add(user));
 
         try {
-            userService.upgradeLevels();
+            txUserService.upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
-        } finally {
-            final GeneralUserLevelUpgradePolicy originPolicy = new GeneralUserLevelUpgradePolicy();
-            originPolicy.setUserDao(userDao);
-            originPolicy.setMailSender(mailSender);
-            userService.setUserLevelUpgradePolicy(originPolicy);
         }
 
         checkLevelUpgraded(users.get(1), false);

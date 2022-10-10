@@ -1,4 +1,4 @@
-package service;
+package service.mock;
 
 import java.util.ArrayList;
 import java.util.List;

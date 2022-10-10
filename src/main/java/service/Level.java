@@ -1,3 +1,5 @@
+package service;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
