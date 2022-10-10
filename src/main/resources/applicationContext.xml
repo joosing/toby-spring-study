@@ -14,7 +14,7 @@
   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
     <property name="dataSource" ref="dataSource"/>
   </bean>
-  <bean id="mailSender" class="service.mock.MockMailSender" />
+  <bean id="mailSender" class="service.mock.DummyMailSender" />
   <bean id="userLevelUpgradePolicy" class="service.GeneralUserLevelUpgradePolicy">
     <property name="userDao" ref="userDao"/>
     <property name="mailSender" ref="mailSender"/>

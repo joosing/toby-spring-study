@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -23,18 +24,19 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
     @Autowired
+    UserLevelUpgradePolicy userLevelUpgradePolicy;
+    @Autowired
     UserDao userDao;
     @Autowired
-    MockMailSender mailSender;
-    @Autowired
     PlatformTransactionManager transactionManager;
+    @Autowired
+    MailSender mailSender;
 
     List<User> users; // 테스트 픽스처
 
     @Before
     public void setUp() {
         userDao.deleteAll();
-        mailSender.clear();
         users = Arrays.asList(
                 new User("bumjini", "박범진", "p1", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER - 1, 0, "joosing711@gmail.com"),
                 new User("joytouch", "강명성", "p2", Level.BASIC, GeneralUserLevelUpgradePolicy.MIN_LOGIN_COUNT_FOR_SILVER, 0, "joosing711@gmail.com"),
@@ -72,6 +74,9 @@ public class UserServiceTest {
     public void upgradeLevels() throws Exception {
         users.forEach(user -> userDao.add(user));
 
+        final MockMailSender mockMailSender = new MockMailSender();
+        userLevelUpgradePolicy.setMailSender(mockMailSender);
+
         userService.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
@@ -80,7 +85,7 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
 
-        final List<String> request = mailSender.getRequests();
+        final List<String> request = mockMailSender.getRequests();
         System.out.println(request.size());
         Assert.assertEquals(2, request.size());
         Assert.assertEquals(users.get(1).getEmail(), request.get(0));
