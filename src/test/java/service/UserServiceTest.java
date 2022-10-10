@@ -1,6 +1,7 @@
 package service;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,24 +73,32 @@ public class UserServiceTest {
 
     @Test
     public void upgradeLevels() throws Exception {
-        users.forEach(user -> userDao.add(user));
+        // Given
+        final UserServiceImpl testUserService = new UserServiceImpl();
+
+        final UserLevelUpgradePolicy testUserLevelUpgradePolicy = new GeneralUserLevelUpgradePolicy();
+        testUserService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy);
+
+        final MockUserDao mockUserDao = new MockUserDao(users);
+        testUserService.setUserDao(mockUserDao);
+        testUserLevelUpgradePolicy.setUserDao(mockUserDao);
 
         final MockMailSender mockMailSender = new MockMailSender();
-        userLevelUpgradePolicy.setMailSender(mockMailSender);
+        testUserLevelUpgradePolicy.setMailSender(mockMailSender);
 
-        userService.upgradeLevels();
+        // When
+        testUserService.upgradeLevels();
 
-        checkLevelUpgraded(users.get(0), false);
-        checkLevelUpgraded(users.get(1), true);
-        checkLevelUpgraded(users.get(2), false);
-        checkLevelUpgraded(users.get(3), true);
-        checkLevelUpgraded(users.get(4), false);
+        // Then
+        final List<String> mailRequests = mockMailSender.getRequests();
+        Assert.assertEquals(2, mailRequests.size());
+        Assert.assertEquals(users.get(1).getEmail(), mailRequests.get(0));
+        Assert.assertEquals(users.get(3).getEmail(), mailRequests.get(1));
 
-        final List<String> request = mockMailSender.getRequests();
-        System.out.println(request.size());
-        Assert.assertEquals(2, request.size());
-        Assert.assertEquals(users.get(1).getEmail(), request.get(0));
-        Assert.assertEquals(users.get(3).getEmail(), request.get(1));
+        final List<User> updateRequests = mockUserDao.getUpdated();
+        Assert.assertEquals(2, updateRequests.size());
+        checkUserAndLevel(updateRequests.get(0), "joytouch", Level.SILVER);
+        checkUserAndLevel(updateRequests.get(1), "madnite1", Level.GOLD);
     }
 
     @Test
@@ -127,6 +136,11 @@ public class UserServiceTest {
         }
     }
 
+    private static void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        Assert.assertEquals(expectedId, updated.getId());
+        Assert.assertEquals(expectedLevel, updated.getLevel());
+    }
+
     static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
         private final String id;
 
@@ -144,5 +158,49 @@ public class UserServiceTest {
     static class TestUserServiceException extends RuntimeException {
         @Serial
         private static final long serialVersionUID = -1962780078733550838L;
+    }
+
+
+    static final class MockUserDao implements UserDao{
+        final List<User> users;
+        final List<User> updated = new ArrayList<>();
+
+        private MockUserDao(List<User> users) {
+            this.users = users;
+        }
+
+        public List<User> getUpdated() {
+            return updated;
+        }
+
+        @Override
+        public List<User> getAll() {
+            return users;
+        }
+
+        @Override
+        public void update(User user) {
+            updated.add(user);
+        }
+
+        @Override
+        public void add(User user) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public User get(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void deleteAll() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getCount() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
