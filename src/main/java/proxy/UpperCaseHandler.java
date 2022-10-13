@@ -12,16 +12,19 @@ import java.lang.reflect.Method;
  */
 @SuppressWarnings("ClassCanBeRecord")
 public class UpperCaseHandler implements InvocationHandler {
-    private final Hello target;
+    private final Object target;
 
-    public UpperCaseHandler(Hello target) {
+    public UpperCaseHandler(Object target) {
         this.target = target;
     }
 
-    @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        String ret = (String) method.invoke(target, args);
-        return ret.toUpperCase();
+        Object ret = method.invoke(target, args);
+        if (ret instanceof String && method.getName().startsWith("say")) {
+            return ((String) ret).toUpperCase();
+        } else {
+            return ret;
+        }
     }
 }
