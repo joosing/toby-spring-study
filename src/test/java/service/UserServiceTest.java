@@ -3,6 +3,7 @@ package service;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.Serial;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -23,6 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import dao.UserDao;
 import pojo.User;
+import proxy.TransactionHandler;
 import service.mock.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
@@ -59,10 +62,10 @@ public class UserServiceTest {
 
         final Level levelBefore = user.getLevel();
         userService.add(user);
-        Assert.assertEquals(levelBefore, user.getLevel());
+        Assertions.assertEquals(levelBefore, user.getLevel());
 
         final User userRead = userDao.get(user.getId());
-        Assert.assertEquals(levelBefore, userRead.getLevel());
+        Assertions.assertEquals(levelBefore, userRead.getLevel());
     }
 
     @Test
@@ -71,14 +74,14 @@ public class UserServiceTest {
         user.setLevel(null);
 
         userService.add(user);
-        Assert.assertEquals(Level.BASIC, user.getLevel());
+        Assertions.assertEquals(Level.BASIC, user.getLevel());
 
         final User userRead = userDao.get(user.getId());
-        Assert.assertEquals(Level.BASIC, userRead.getLevel());
+        Assertions.assertEquals(Level.BASIC, userRead.getLevel());
     }
 
     @Test
-    public void mockUpgradeLevels() {
+    public void upgradeLevelsWithMockFramework() {
         // Given
         final UserServiceImpl testUserService = new UserServiceImpl();
 
@@ -110,8 +113,12 @@ public class UserServiceTest {
         Assert.assertEquals(users.get(3).getEmail(), Objects.requireNonNull(allValues.get(1).getTo())[0]);
     }
 
+    /**
+     * 순수한 사용자 Level 업그레이드 기능을 테스트함으로 트랜잭션과 관련된 코드는 필요 없다. 테스트에서 관심을 가지는 부분에 완전히
+     * 집중한 테스트 코드이다.
+     */
     @Test
-    public void upgradeLevels() throws Exception {
+    public void upgradeLevelsWithManualMock() throws Exception {
         // Given
         final UserServiceImpl testUserService = new UserServiceImpl();
 
@@ -140,32 +147,27 @@ public class UserServiceTest {
         checkUserAndLevel(updateRequests.get(1), "madnite1", Level.GOLD);
     }
 
+    @SuppressWarnings("CatchMayIgnoreException")
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        /*
-         할일
-         - 다이나믹 프록시의 요청으로부터 부가기능을 수행하고 실제 기능을 타겟에게 위임할 InvocationHandler를 구현합니다.
-         - 다이나믹 프록시를 사용해서 타겟 인터페이스/InvocationHandler/타겟 객체를 전달하며 다이나믹 프록시를 생성합니다.
-            - 타겟 객체(UserServiceTx)를 파라미터로 전달하며 InvocationHandler를 생성합니다.
-            - 타겟 인터페이스/InvocationHandler를 전달하며 다이나믹 프록시를 생성합니다.
-            - 다이나믹 프록시로 테스트를 수행합니다.
-         */
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
 
-        final UserServiceImpl testUserServiceImpl = new UserServiceImpl();
-        testUserServiceImpl.setUserDao(userDao);
-        testUserServiceImpl.setUserLevelUpgradePolicy(policy);
+        final UserServiceImpl testUserService = new UserServiceImpl();
+        testUserService.setUserDao(userDao);
+        testUserService.setUserLevelUpgradePolicy(policy);
 
-        /*
-        결국 핵심은 직접 구현한 UserServiceTx 클래스를 구현하지 않고, 다이나믹 프록시를 사용해 다음의 장점을 취하는 연습이다.
-        - 타겟의 인터페이스를 모두 구현하지 않아도, 프록시에서 리플렉션을 사용해 직접 구현해 준다.
-        - 직접 구현한 프록시 클래스에 부가기능 코드가 중복되는데 중복되는 기능이 공유될 수 있도록 InvocationHandler로 구현한다.
-         */
-        final UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setUserService(testUserServiceImpl);
-        txUserService.setTransactionManager(transactionManager);
+        TransactionHandler transactionHandler = new TransactionHandler();
+        transactionHandler.setTarget(testUserService);
+        transactionHandler.setPattern("upgradeLevels");
+        transactionHandler.setTransactionManager(transactionManager);
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[] { UserService.class },
+                transactionHandler
+        );
 
         users.forEach(user -> userDao.add(user));
 
