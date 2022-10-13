@@ -142,6 +142,14 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
+        /*
+         할일
+         - 다이나믹 프록시의 요청으로부터 부가기능을 수행하고 실제 기능을 타겟에게 위임할 InvocationHandler를 구현합니다.
+         - 다이나믹 프록시를 사용해서 타겟 인터페이스/InvocationHandler/타겟 객체를 전달하며 다이나믹 프록시를 생성합니다.
+            - 타겟 객체(UserServiceTx)를 파라미터로 전달하며 InvocationHandler를 생성합니다.
+            - 타겟 인터페이스/InvocationHandler를 전달하며 다이나믹 프록시를 생성합니다.
+            - 다이나믹 프록시로 테스트를 수행합니다.
+         */
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
@@ -150,6 +158,11 @@ public class UserServiceTest {
         testUserServiceImpl.setUserDao(userDao);
         testUserServiceImpl.setUserLevelUpgradePolicy(policy);
 
+        /*
+        결국 핵심은 직접 구현한 UserServiceTx 클래스를 구현하지 않고, 다이나믹 프록시를 사용해 다음의 장점을 취하는 연습이다.
+        - 타겟의 인터페이스를 모두 구현하지 않아도, 프록시에서 리플렉션을 사용해 직접 구현해 준다.
+        - 직접 구현한 프록시 클래스에 부가기능 코드가 중복되는데 중복되는 기능이 공유될 수 있도록 InvocationHandler로 구현한다.
+         */
         final UserServiceTx txUserService = new UserServiceTx();
         txUserService.setUserService(testUserServiceImpl);
         txUserService.setTransactionManager(transactionManager);
