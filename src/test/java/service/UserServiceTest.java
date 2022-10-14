@@ -1,14 +1,6 @@
 package service;
 
-import static org.mockito.ArgumentMatchers.any;
-
-import java.io.Serial;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
+import dao.UserDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,20 +9,30 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import dao.UserDao;
 import pojo.User;
-import proxy.TransactionHandler;
+import proxy.TransactionProxyFactoryBean;
 import service.mock.MockMailSender;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserServiceTest {
+    @Autowired
+    ApplicationContext context;
     @Autowired
     UserService userService;
     @Autowired
@@ -149,30 +151,23 @@ public class UserServiceTest {
 
     @SuppressWarnings("CatchMayIgnoreException")
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
 
-        final UserServiceImpl testUserService = new UserServiceImpl();
-        testUserService.setUserDao(userDao);
-        testUserService.setUserLevelUpgradePolicy(policy);
+        UserServiceImpl userServiceImpl = context.getBean("userServiceImpl", UserServiceImpl.class);
+        userServiceImpl.setUserLevelUpgradePolicy(policy);
 
-        TransactionHandler transactionHandler = new TransactionHandler();
-        transactionHandler.setTarget(testUserService);
-        transactionHandler.setPattern("upgradeLevels");
-        transactionHandler.setTransactionManager(transactionManager);
-
-        UserService txUserService = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[] { UserService.class },
-                transactionHandler
-        );
+        TransactionProxyFactoryBean factoryBean = context.getBean("&userService", TransactionProxyFactoryBean.class);
+        factoryBean.setTarget(userServiceImpl);
+        UserService testUserService = (UserService) factoryBean.getObject();
 
         users.forEach(user -> userDao.add(user));
 
         try {
-            txUserService.upgradeLevels();
+            Objects.requireNonNull(testUserService).upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
