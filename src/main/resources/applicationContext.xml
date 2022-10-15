@@ -19,9 +19,11 @@
     <property name="userDao" ref="userDao"/>
     <property name="mailSender" ref="mailSender"/>
   </bean>
-  <bean id="userService" class="service.UserServiceTx">
+  <bean id="userService" class="proxy.TransactionProxyFactoryBean">
     <property name="transactionManager" ref="transactionManager"/>
-    <property name="userService" ref="userServiceImpl"/>
+    <property name="target" ref="userServiceImpl"/>
+    <property name="pattern" value="upgradeLevels"/>
+    <property name="serviceInterface" value="service.UserService"/>
   </bean>
   <bean id="userServiceImpl" class="service.UserServiceImpl">
     <property name="userDao" ref="userDao"/>

@@ -1,6 +1,24 @@
 package service;
 
-import static org.mockito.ArgumentMatchers.any;
+import dao.UserDao;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
+import pojo.User;
+import proxy.TransactionProxyFactoryBean;
+import service.mock.MockMailSender;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -8,26 +26,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import dao.UserDao;
-import pojo.User;
-import service.mock.MockMailSender;
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserServiceTest {
+    @Autowired
+    ApplicationContext context;
     @Autowired
     UserService userService;
     @Autowired
@@ -59,10 +64,10 @@ public class UserServiceTest {
 
         final Level levelBefore = user.getLevel();
         userService.add(user);
-        Assert.assertEquals(levelBefore, user.getLevel());
+        Assertions.assertEquals(levelBefore, user.getLevel());
 
         final User userRead = userDao.get(user.getId());
-        Assert.assertEquals(levelBefore, userRead.getLevel());
+        Assertions.assertEquals(levelBefore, userRead.getLevel());
     }
 
     @Test
@@ -71,14 +76,14 @@ public class UserServiceTest {
         user.setLevel(null);
 
         userService.add(user);
-        Assert.assertEquals(Level.BASIC, user.getLevel());
+        Assertions.assertEquals(Level.BASIC, user.getLevel());
 
         final User userRead = userDao.get(user.getId());
-        Assert.assertEquals(Level.BASIC, userRead.getLevel());
+        Assertions.assertEquals(Level.BASIC, userRead.getLevel());
     }
 
     @Test
-    public void mockUpgradeLevels() {
+    public void upgradeLevelsWithMockFramework() {
         // Given
         final UserServiceImpl testUserService = new UserServiceImpl();
 
@@ -110,8 +115,12 @@ public class UserServiceTest {
         Assert.assertEquals(users.get(3).getEmail(), Objects.requireNonNull(allValues.get(1).getTo())[0]);
     }
 
+    /**
+     * 순수한 사용자 Level 업그레이드 기능을 테스트함으로 트랜잭션과 관련된 코드는 필요 없다. 테스트에서 관심을 가지는 부분에 완전히
+     * 집중한 테스트 코드이다.
+     */
     @Test
-    public void upgradeLevels() throws Exception {
+    public void upgradeLevelsWithManualMock() throws Exception {
         // Given
         final UserServiceImpl testUserService = new UserServiceImpl();
 
@@ -140,24 +149,25 @@ public class UserServiceTest {
         checkUserAndLevel(updateRequests.get(1), "madnite1", Level.GOLD);
     }
 
+    @SuppressWarnings("CatchMayIgnoreException")
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
         final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
 
-        final UserServiceImpl testUserServiceImpl = new UserServiceImpl();
-        testUserServiceImpl.setUserDao(userDao);
-        testUserServiceImpl.setUserLevelUpgradePolicy(policy);
+        UserServiceImpl userServiceImpl = context.getBean("userServiceImpl", UserServiceImpl.class);
+        userServiceImpl.setUserLevelUpgradePolicy(policy);
 
-        final UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setUserService(testUserServiceImpl);
-        txUserService.setTransactionManager(transactionManager);
+        TransactionProxyFactoryBean factoryBean = context.getBean("&userService", TransactionProxyFactoryBean.class);
+        factoryBean.setTarget(userServiceImpl);
+        UserService testUserService = (UserService) factoryBean.getObject();
 
         users.forEach(user -> userDao.add(user));
 
         try {
-            txUserService.upgradeLevels();
+            Objects.requireNonNull(testUserService).upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
