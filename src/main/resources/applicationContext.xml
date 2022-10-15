@@ -22,24 +22,24 @@
   <bean id="transactionAdvice" class="proxy.TransactionAdvice">
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
-  <bean id="transactionPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+  <bean id="transactionPointCut" class="proxy.NameMatchClassMethodPointcut">
+    <property name="mappedClassName" value="*ServiceImpl"/>
     <property name="mappedName" value="upgrade*"/>
   </bean>
+  <!-- 자동 프록시 생성기 처리 과정
+  1. 등록된 빈 중에 Advisor 인터페이스를 구현한 것을 찾는다.
+  2. 생성되는 모든 빈에 대해 어드바이저의 포인트컷을 적용해보면서 프록시 적용 대상을 찾는다.
+  3. 빈 클래스가 프록시 선정 대상이라면 프록시를 만들어 원래 빈 오브젝트와 바꿔치기 한다.
+  4. 원래 빈 오브젝트는 프록시 뒤에 연결돼서 프록시를 통해서만 접근 될 수 있도록 한다.
+  -->
   <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
     <property name="pointcut" ref="transactionPointCut"/>
     <property name="advice" ref="transactionAdvice"/>
   </bean>
-  <!-- 다시 무엇을 해야하는가? 프록시 팩토리 빈에게 타겟을 가르쳐 줘야 한다. 그리고 분리된 Advice 또는 Advisor(Advice + PointCut) 정보를 전달해 주기만 하면 된다. -->
-  <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="userServiceImpl"/>
-    <property name="interceptorNames">
-      <list>
-        <value>transactionAdvisor</value>
-      </list>
-    </property>
-  </bean>
-  <bean id="userServiceImpl" class="service.UserServiceImpl">
+  <bean id="userService" class="service.UserServiceImpl">
     <property name="userDao" ref="userDao"/>
     <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
   </bean>
+  <!--자동 프록시 생성시 (빈 후처리기)-->
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 </beans>
