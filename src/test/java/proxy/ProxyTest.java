@@ -2,8 +2,6 @@ package proxy;
 
 import java.lang.reflect.Proxy;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.ProxyFactoryBean;
@@ -67,17 +65,5 @@ public class ProxyTest {
         Assertions.assertEquals("HELLO TOBY", hello.sayHello("Toby"));
         Assertions.assertEquals("HI TOBY", hello.sayHi("Toby"));
         Assertions.assertEquals("Thank You Toby", hello.sayThankYou("Toby"));
-    }
-
-    // 템플릿/콜백 패턴에서 콜백 메서드 객체 역할을 한다.
-    static class UpperCaseAdvice implements MethodInterceptor {
-
-        // MethodInvocation
-        @Override
-        public Object invoke(MethodInvocation invocation) throws Throwable {
-            String ret = (String) invocation.proceed();
-            assert ret != null;
-            return ret.toUpperCase();
-        }
     }
 }
