@@ -1,6 +1,13 @@
 package service;
 
-import dao.UserDao;
+import static org.mockito.ArgumentMatchers.any;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
@@ -16,17 +24,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import dao.UserDao;
 import pojo.User;
-import proxy.TransactionProxyFactoryBean;
 import service.mock.MockMailSender;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
@@ -157,11 +158,11 @@ public class UserServiceTest {
         policy.setUserDao(userDao);
         policy.setMailSender(mailSender);
 
-        UserServiceImpl userServiceImpl = context.getBean("userServiceImpl", UserServiceImpl.class);
-        userServiceImpl.setUserLevelUpgradePolicy(policy);
+        UserServiceImpl testUserServiceImpl = context.getBean("userServiceImpl", UserServiceImpl.class);
+        testUserServiceImpl.setUserLevelUpgradePolicy(policy);
 
-        TransactionProxyFactoryBean factoryBean = context.getBean("&userService", TransactionProxyFactoryBean.class);
-        factoryBean.setTarget(userServiceImpl);
+        ProxyFactoryBean factoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+        factoryBean.setTarget(testUserServiceImpl);
         UserService testUserService = (UserService) factoryBean.getObject();
 
         users.forEach(user -> userDao.add(user));
