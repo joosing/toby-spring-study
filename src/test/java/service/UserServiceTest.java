@@ -3,6 +3,7 @@ package service;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.Serial;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,15 +16,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import dao.UserDao;
 import pojo.User;
@@ -33,17 +31,11 @@ import service.mock.MockMailSender;
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserServiceTest {
     @Autowired
-    ApplicationContext context;
-    @Autowired
     UserService userService;
     @Autowired
-    UserLevelUpgradePolicy userLevelUpgradePolicy;
+    UserService transactionTestUserService;
     @Autowired
     UserDao userDao;
-    @Autowired
-    PlatformTransactionManager transactionManager;
-    @Autowired
-    MailSender mailSender;
 
     List<User> users; // 테스트 픽스처
 
@@ -154,27 +146,28 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
-        final TestUserLevelUpgradePolicy policy = new TestUserLevelUpgradePolicy(users.get(3).getId());
-        policy.setUserDao(userDao);
-        policy.setMailSender(mailSender);
-
-        UserServiceImpl testUserServiceImpl = context.getBean("userServiceImpl", UserServiceImpl.class);
-        testUserServiceImpl.setUserLevelUpgradePolicy(policy);
-
-        ProxyFactoryBean factoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        factoryBean.setTarget(testUserServiceImpl);
-        UserService testUserService = (UserService) factoryBean.getObject();
-
         users.forEach(user -> userDao.add(user));
 
         try {
-            Objects.requireNonNull(testUserService).upgradeLevels();
+            Objects.requireNonNull(transactionTestUserService).upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
         }
 
         checkLevelUpgraded(users.get(1), false);
+    }
+
+    @Test
+    public void userServiceNotEqualsToTestUserService() {
+        System.out.println(userService);
+        System.out.println(transactionTestUserService);
+        Assertions.assertNotEquals(userService, transactionTestUserService);
+    }
+
+    @Test
+    public void testUserServiceInstanceOfProxsy() {
+        Assertions.assertTrue(transactionTestUserService instanceof Proxy);
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
@@ -191,15 +184,21 @@ public class UserServiceTest {
         Assert.assertEquals(expectedLevel, updated.getLevel());
     }
 
-    static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
-        private final String id;
+    /**
+     * 클래스 선정 PointCut 테스트를 위한 클래스
+     */
+    static class TestUserServiceImpl extends UserServiceImpl {}
 
-        TestUserLevelUpgradePolicy(String id) {
-            this.id = id;
-        }
+    static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
+
+        // TODO : 왜 구성 파일에서 주입받지 못하는지 확인
+//        public void setId(String id) {
+//            this.id = id;
+//        }
 
         @Override
         public void upgrade(User user) {
+            String id = "madnite1";
             if (user.getId().equals(id)) {throw new TestUserServiceException();}
             super.upgrade(user);
         }
