@@ -42,7 +42,7 @@
     <property name="userDao" ref="userDao"/>
     <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
   </bean>
-  <bean id="transactionTestUserService" class="service.UserServiceTest$TestUserService" parent="userService">
+  <bean id="transactionTestUserService" class="service.UserServiceTest$TestUserServiceImpl" parent="userService">
     <property name="userLevelUpgradePolicy" ref="testUserLevelUpgradePolicy"/>
   </bean>
   <!--자동 프록시 생성시 (빈 후처리기)-->
