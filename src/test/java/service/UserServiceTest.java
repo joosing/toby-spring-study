@@ -166,7 +166,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUserServiceInstanceOfProxsy() {
+    public void testUserServiceInstanceOfProxy() {
         Assertions.assertTrue(transactionTestUserService instanceof Proxy);
     }
 
@@ -187,7 +187,7 @@ public class UserServiceTest {
     /**
      * 클래스 선정 PointCut 테스트를 위한 클래스
      */
-    static class TestUserServiceImpl extends UserServiceImpl {}
+    static class TestUserService extends UserServiceImpl {}
 
     static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
 
