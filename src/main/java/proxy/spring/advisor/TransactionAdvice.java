@@ -1,4 +1,4 @@
-package proxy;
+package proxy.spring.advisor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

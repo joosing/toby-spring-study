@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="spring" />
         <module name="toby-spring-study" />
+        <module name="follow-toby-spring" />
       </profile>
     </annotationProcessing>
   </component>

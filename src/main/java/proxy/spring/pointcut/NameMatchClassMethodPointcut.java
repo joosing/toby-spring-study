@@ -1,4 +1,4 @@
-package proxy;
+package proxy.spring.pointcut;
 
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.NameMatchMethodPointcut;

@@ -1,8 +1,9 @@
-package proxy;
+package proxy.jdk.dynamic.factory;
 
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import proxy.jdk.dynamic.invocationhandler.TransactionHandler;
 
 import java.lang.reflect.Proxy;
 

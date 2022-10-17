@@ -21,10 +21,10 @@
   </bean>
   <!-- 내부 정적 클래스는 '$' 기호로 접근합니다. -->
   <bean id="testUserLevelUpgradePolicy" class="service.UserServiceTest$TestUserLevelUpgradePolicy" parent="userLevelUpgradePolicy" />
-  <bean id="transactionAdvice" class="proxy.TransactionAdvice">
+  <bean id="transactionAdvice" class="proxy.spring.advisor.TransactionAdvice">
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
-  <bean id="transactionPointCut" class="proxy.NameMatchClassMethodPointcut">
+  <bean id="transactionPointCut" class="proxy.spring.pointcut.NameMatchClassMethodPointcut">
     <property name="mappedClassName" value="*ServiceImpl"/>
     <property name="mappedName" value="upgrade*"/>
   </bean>
