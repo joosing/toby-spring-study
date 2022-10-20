@@ -21,12 +21,11 @@
   </bean>
   <!-- 내부 정적 클래스는 '$' 기호로 접근합니다. -->
   <bean id="testUserLevelUpgradePolicy" class="service.UserServiceTest$TestUserLevelUpgradePolicy" parent="userLevelUpgradePolicy" />
-  <bean id="transactionAdvice" class="proxy.TransactionAdvice">
+  <bean id="transactionAdvice" class="proxy.spring.advisor.TransactionAdvice">
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
-  <bean id="transactionPointCut" class="proxy.NameMatchClassMethodPointcut">
-    <property name="mappedClassName" value="*ServiceImpl"/>
-    <property name="mappedName" value="upgrade*"/>
+  <bean id="transactionPointCut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+    <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))"/>
   </bean>
   <!-- 자동 프록시 생성기 처리 과정
   1. 등록된 빈 중에 Advisor 인터페이스를 구현한 것을 찾는다.
