@@ -12,7 +12,7 @@ import org.springframework.aop.support.NameMatchMethodPointcut;
 
 public class ProxyTest {
     @Test
-    public void simpleProxy() {
+    public void manualProxy() {
         Hello hello = new HelloUppercase(new HelloTarget());
         Assertions.assertEquals("HELLO TOBY", hello.sayHello("Toby"));
         Assertions.assertEquals("HI TOBY", hello.sayHi("Toby"));
