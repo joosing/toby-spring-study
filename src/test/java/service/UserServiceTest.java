@@ -1,14 +1,6 @@
 package service;
 
-import static org.mockito.ArgumentMatchers.any;
-
-import java.io.Serial;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
+import dao.UserDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,21 +9,31 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import dao.UserDao;
 import pojo.User;
 import service.mock.MockMailSender;
+
+import java.io.Serial;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 @ContextConfiguration(locations="/applicationContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class UserServiceTest {
     @Autowired
     UserService userService;
+    @Autowired
+    UserService testUserService;
     @Autowired
     UserService transactionTestUserService;
     @Autowired
@@ -158,6 +160,12 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(1), false);
     }
 
+    @Test(expected = UncategorizedSQLException.class)
+    public void readOnlyTransactionAttribute() {
+        users.forEach(user -> userDao.add(user));
+        testUserService.getAll();
+    }
+
     @Test
     public void userServiceNotEqualsToTestUserService() {
         System.out.println(userService);
@@ -187,7 +195,15 @@ public class UserServiceTest {
     /**
      * 클래스 선정 PointCut 테스트를 위한 클래스
      */
-    static class TestUserServiceImpl extends UserServiceImpl {}
+    static class TestUserServiceImpl extends UserServiceImpl {
+        @Override
+        public List<User> getAll() {
+            for (User user : super.getAll()) {
+                update(user);
+            }
+            return List.of();
+        }
+    }
 
     static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
 

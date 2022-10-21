@@ -1,9 +1,9 @@
 package service;
 
-import java.util.List;
-
 import dao.UserDao;
 import pojo.User;
+
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
     private UserDao userDao;
@@ -33,5 +33,25 @@ public class UserServiceImpl implements UserService {
             user.setLevel(Level.BASIC);
         }
         userDao.add(user);
+    }
+
+    @Override
+    public User get(String id) {
+        return userDao.get(id);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        userDao.deleteAll();
+    }
+
+    @Override
+    public void update(User user) {
+        userDao.update(user);
     }
 }

@@ -15,12 +15,13 @@ public class TransactionAdvice implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
+        // DefaultTransactionDefinition : 디폴트 트랜잭션 속성 사용 (트랜잭션 전파, 격리수준, read-only, 타임아웃)
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             Object ret = invocation.proceed();
             transactionManager.commit(status);
             return ret;
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // 롤백을 수행할 예외를 설정
             transactionManager.rollback(status);
             throw e;
         }
