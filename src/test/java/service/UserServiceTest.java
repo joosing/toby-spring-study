@@ -24,8 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 
 import dao.UserDao;
 import pojo.User;
@@ -184,34 +183,23 @@ public class UserServiceTest {
         Assertions.assertTrue(transactionTestUserService instanceof Proxy);
     }
 
-    @Test(expected = UncategorizedSQLException.class)
+    @Transactional
+    @Test
     public void transactionSync() {
-        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setReadOnly(true);
-        TransactionStatus txStatus = transactionManager.getTransaction(transactionDefinition);
-
         userService.deleteAll();
 
         userService.add(users.get(0));
         userService.add(users.get(1));
-
-        transactionManager.commit(txStatus);
     }
 
     @Test
+    @Transactional
+//    @Rollback(false)
     public void transactionRollback() {
         userDao.deleteAll();
-        Assertions.assertEquals(0, userDao.getCount());
-
-        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        TransactionStatus txStatus = transactionManager.getTransaction(transactionDefinition);
 
         userService.add(users.get(0));
         userService.add(users.get(1));
-        Assertions.assertEquals(2, userDao.getCount());
-
-        transactionManager.rollback(txStatus);
-        Assertions.assertEquals(0, userDao.getCount());
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
