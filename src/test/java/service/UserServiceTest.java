@@ -198,6 +198,22 @@ public class UserServiceTest {
         transactionManager.commit(txStatus);
     }
 
+    @Test
+    public void transactionRollback() {
+        userDao.deleteAll();
+        Assertions.assertEquals(0, userDao.getCount());
+
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus txStatus = transactionManager.getTransaction(transactionDefinition);
+
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+        Assertions.assertEquals(2, userDao.getCount());
+
+        transactionManager.rollback(txStatus);
+        Assertions.assertEquals(0, userDao.getCount());
+    }
+
     private void checkLevelUpgraded(User user, boolean upgraded) {
         final User userUpdated = userDao.get(user.getId());
         if (upgraded) {
