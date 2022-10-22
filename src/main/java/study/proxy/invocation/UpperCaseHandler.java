@@ -1,4 +1,4 @@
-package proxy.jdk.dynamic.factory;
+package study.proxy.invocation;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

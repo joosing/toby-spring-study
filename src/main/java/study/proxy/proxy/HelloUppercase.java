@@ -1,4 +1,6 @@
-package proxy.jdk.dynamic.factory;
+package study.proxy.proxy;
+
+import study.proxy.target.Hello;
 
 public class HelloUppercase implements Hello {
     private Hello hello;

@@ -1,4 +1,4 @@
-package study.factorybean;
+package study.proxy.target;
 
 @SuppressWarnings("ClassWithOnlyPrivateConstructors")
 public class Message {

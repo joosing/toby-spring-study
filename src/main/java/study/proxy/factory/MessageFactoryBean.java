@@ -1,6 +1,8 @@
-package study.factorybean;
+package study.proxy.factory;
 
 import org.springframework.beans.factory.FactoryBean;
+
+import study.proxy.target.Message;
 
 public class MessageFactoryBean implements FactoryBean<Message> {
     String text;

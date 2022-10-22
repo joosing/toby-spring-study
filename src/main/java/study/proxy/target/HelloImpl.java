@@ -1,4 +1,4 @@
-package proxy.jdk.dynamic.factory;
+package study.proxy.target;
 
 public class HelloImpl implements Hello {
     @Override

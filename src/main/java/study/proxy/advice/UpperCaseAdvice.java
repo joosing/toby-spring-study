@@ -1,4 +1,4 @@
-package proxy.jdk.dynamic.factory;
+package study.proxy.advice;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
