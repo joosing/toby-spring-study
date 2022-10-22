@@ -93,7 +93,7 @@ public class ProxyTest {
             // 익명 내부 클래스로 만들어서 클래스를 하위 클래스를 구현할 수 있구나.
             @Override
             public ClassFilter getClassFilter() {
-                return clazz -> clazz.getSimpleName().startsWith("HelloT");
+                return clazz -> clazz.getSimpleName().startsWith("HelloI");
             }
         };
         classMethodPointCut.setMappedName("sayH*");
@@ -104,7 +104,7 @@ public class ProxyTest {
         class HelloWorld extends HelloImpl {}
         checkAdviced(new HelloWorld(), classMethodPointCut, false);
         class HelloToby extends HelloImpl {}
-        checkAdviced(new HelloToby(), classMethodPointCut, true);
+        checkAdviced(new HelloToby(), classMethodPointCut, false);
     }
 
     private static void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {
