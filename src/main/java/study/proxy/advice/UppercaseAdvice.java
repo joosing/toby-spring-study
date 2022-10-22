@@ -3,7 +3,7 @@ package study.proxy.advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-public class UpperCaseAdvice implements MethodInterceptor {
+public class UppercaseAdvice implements MethodInterceptor {
 
     // MethodInvocation
     @Override

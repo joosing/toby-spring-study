@@ -15,7 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import study.proxy.advice.UpperCaseAdvice;
+import study.proxy.advice.UppercaseAdvice;
 import study.proxy.invocation.UpperCaseHandler;
 import study.proxy.proxy.HelloUppercase;
 import study.proxy.target.Hello;
@@ -52,7 +52,7 @@ public class ProxyTest {
     public void proxyFactoryBean() {
         ProxyFactoryBean factoryBean = new ProxyFactoryBean();
         factoryBean.setTarget(new HelloImpl());
-        factoryBean.addAdvice(new UpperCaseAdvice());
+        factoryBean.addAdvice(new UppercaseAdvice());
         Hello hello = (Hello) factoryBean.getObject();
 
         Assertions.assertEquals("HELLO TOBY", hello.sayHello("Toby"));
@@ -62,13 +62,22 @@ public class ProxyTest {
 
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void pointCutAdvisoer() {
+    public void pointCutAdvisor() {
+        // 스프링의 ProxyFactoryBean 생성
         ProxyFactoryBean factoryBean = new ProxyFactoryBean();
+
+        // 팩토리빈에 타겟 설정
         factoryBean.setTarget(new HelloImpl());
 
+        // 포인트컷과 어디바이스 생성과 설정
         NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
         pointcut.setMappedName("sayH*");
-        factoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UpperCaseAdvice()));
+        UppercaseAdvice advice = new UppercaseAdvice();
+
+        // 어드바이저 팩토리에 추가
+        factoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, advice));
+
+        // 프록시 생성
         Hello hello = (Hello) factoryBean.getObject();
 
         Assertions.assertEquals("HELLO TOBY", hello.sayHello("Toby"));
@@ -104,7 +113,7 @@ public class ProxyTest {
         // 2. 타겟 설정
         proxyFactoryBean.setTarget(target);
         // 3. 재활용 가능한 부가기능 전담 객체와 클래스 및 메서드 선정 PointCut 객체를 포함한 Advisor 생성
-        proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UpperCaseAdvice()));
+        proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
         // 4. 프록시 생성
         Hello proxiedHello = (Hello) proxyFactoryBean.getObject();
 
