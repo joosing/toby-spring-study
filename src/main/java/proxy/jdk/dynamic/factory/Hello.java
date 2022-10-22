@@ -1,4 +1,4 @@
-package proxy;
+package proxy.jdk.dynamic.factory;
 
 public interface Hello {
     String sayHello(String name);

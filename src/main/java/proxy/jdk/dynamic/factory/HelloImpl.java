@@ -1,6 +1,6 @@
-package proxy;
+package proxy.jdk.dynamic.factory;
 
-public class HelloTarget implements Hello {
+public class HelloImpl implements Hello {
     @Override
     public String sayHello(String name) {
         return "Hello " + name;

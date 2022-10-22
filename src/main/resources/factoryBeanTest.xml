@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-  <bean id="message" class="study.factorybean.MessageFactoryBean">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <bean id="message" class="study.proxy.factory.MessageFactoryBean">
     <property name="text" value="Factory Bean"/>
+  </bean>
+  <bean id="helloImpl" class="study.proxy.target.HelloImpl" />
+  <bean id="hello" class="study.proxy.factory.UppercaseProxyFactoryBean">
+    <property name="target" ref="helloImpl" />
+    <property name="pattern" value="say" />
+    <property name="targetInterface" value="study.proxy.target.Hello" />
   </bean>
 </beans>

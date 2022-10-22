@@ -1,9 +1,9 @@
-package proxy;
+package proxy.jdk.dynamic.factory;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-class UpperCaseAdvice implements MethodInterceptor {
+public class UpperCaseAdvice implements MethodInterceptor {
 
     // MethodInvocation
     @Override

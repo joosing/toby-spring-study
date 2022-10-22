@@ -1,4 +1,4 @@
-package proxy;
+package proxy.jdk.dynamic.factory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,15 +13,17 @@ import java.lang.reflect.Method;
 @SuppressWarnings("ClassCanBeRecord")
 public class UpperCaseHandler implements InvocationHandler {
     private final Object target;
+    private final String pattern;
 
-    public UpperCaseHandler(Object target) {
+    public UpperCaseHandler(Object target, String pattern) {
         this.target = target;
+        this.pattern = pattern;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object ret = method.invoke(target, args);
-        if (ret instanceof String && method.getName().startsWith("say")) {
+        if (ret instanceof String && method.getName().startsWith(pattern)) {
             return ((String) ret).toUpperCase();
         } else {
             return ret;
