@@ -3,53 +3,38 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!--Target-->
+  <bean id="helloImpl" class="study.proxy.target.HelloImpl" />
+  <bean id="introduceImpl" class="study.proxy.target.IntroduceImpl" />
   <bean id="message" class="study.proxy.factory.MessageFactoryBean">
     <property name="text" value="Factory Bean"/>
   </bean>
-  <bean id="helloImpl" class="study.proxy.target.HelloImpl" />
+
+  <!--Advice (부가기능)-->
   <bean id="uppercaseAdvice" class="study.proxy.advice.UppercaseAdvice" />
-  <bean id="uppercasePointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-    <property name="mappedName" value="sayH*" />
-  </bean>
-  <bean id="uppercaseAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-    <property name="advice" ref="uppercaseAdvice" />
-    <property name="pointcut" ref="uppercasePointcut" />
-  </bean>
   <bean id="tagAdvice" class="study.proxy.advice.TagAdvice">
     <property name="tag" value="said: " />
   </bean>
-  <bean id="tagPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-    <property name="mappedName" value="say*" />
+
+  <!--Pointcut(AspectJ Expression, 메서드 선정 알고리즘)-->
+  <bean id="uppercasePointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+    <property name="expression" value="execution(* *..*Impl.*(..))" />
+  </bean>
+  <bean id="tagPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+    <property name="expression" value="execution(* *..Introduce*.*(..))" />
+  </bean>
+
+  <!--AutoProxyCreator가 참조하는 직접적인 정보-->
+  <bean id="uppercaseAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+    <property name="advice" ref="uppercaseAdvice" />
+    <property name="pointcut" ref="uppercasePointcut" />
   </bean>
   <bean id="tagAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
     <property name="pointcut" ref="tagPointcut" />
     <property name="advice" ref="tagAdvice" />
   </bean>
-  <bean id="hello" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="helloImpl" />
-    <property name="interceptorNames">
-      <list>
-<!--나중에 등록한 것이 먼저 처리됩니다.-->
-        <value>uppercaseAdvisor</value>
-        <value>tagAdvisor</value>
-      </list>
-    </property>
-  </bean>
 
-  <bean id="introducePointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-    <property name="mappedName" value="introduceY*" />
-  </bean>
-  <bean id="introduceAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-    <property name="advice" ref="uppercaseAdvice"/>
-    <property name="pointcut" ref="introducePointcut" />
-  </bean>
-  <bean id="introduceImpl" class="study.proxy.target.IntroduceImpl" />
-  <bean id="introduce" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="introduceImpl" />
-    <property name="interceptorNames">
-      <list>
-        <value>introduceAdvisor</value>
-      </list>
-    </property>
-  </bean>
+  <!--Advisor 인터페이스 빈을 찾아 자동 프록시 생성자-->
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 </beans>

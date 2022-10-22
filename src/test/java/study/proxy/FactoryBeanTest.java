@@ -38,14 +38,14 @@ public class FactoryBeanTest {
 
     @Test
     public void setupFactoryBean() {
-        Assertions.assertEquals("SAID: HELLO TOBY", hello.sayHello("Toby"));
-        Assertions.assertEquals("SAID: HI TOBY", hello.sayHi("Toby"));
-        Assertions.assertEquals("said: Thank You Toby", hello.sayThankYou("Toby"));
+        Assertions.assertEquals("HELLO TOBY", hello.sayHello("Toby"));
+        Assertions.assertEquals("HI TOBY", hello.sayHi("Toby"));
+        Assertions.assertEquals("THANK YOU TOBY", hello.sayThankYou("Toby"));
     }
 
     @Test
     public void setupFactoryBeanSecond() {
-        Assertions.assertEquals("I am Toby", introduce.introduceMyself("Toby"));
-        Assertions.assertEquals("YOU ARE TOBY", introduce.introduceYou("Toby"));
+        Assertions.assertEquals("SAID: I AM TOBY", introduce.introduceMyself("Toby"));
+        Assertions.assertEquals("SAID: YOU ARE TOBY", introduce.introduceYou("Toby"));
     }
 }
