@@ -12,4 +12,10 @@
     <property name="pattern" value="say" />
     <property name="targetInterface" value="study.proxy.target.Hello" />
   </bean>
+  <bean id="introduceImpl" class="study.proxy.target.IntroduceImpl" />
+  <bean id="introduce" class="study.proxy.factory.UppercaseProxyFactoryBean">
+    <property name="target" ref="introduceImpl" />
+    <property name="pattern" value="introduce" />
+    <property name="targetInterface" value="study.proxy.target.Introduce" />
+  </bean>
 </beans>
