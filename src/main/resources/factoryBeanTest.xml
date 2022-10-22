@@ -9,26 +9,46 @@
   <bean id="helloImpl" class="study.proxy.target.HelloImpl" />
   <bean id="uppercaseAdvice" class="study.proxy.advice.UppercaseAdvice" />
   <bean id="uppercasePointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-    <property name="mappedName" value="say" />
+    <property name="mappedName" value="sayH*" />
   </bean>
   <bean id="uppercaseAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-    <property name="pointcut" ref="uppercasePointcut" />
     <property name="advice" ref="uppercaseAdvice" />
+    <property name="pointcut" ref="uppercasePointcut" />
+  </bean>
+  <bean id="tagAdvice" class="study.proxy.advice.TagAdvice">
+    <property name="tag" value="said: " />
+  </bean>
+  <bean id="tagPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+    <property name="mappedName" value="say*" />
+  </bean>
+  <bean id="tagAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+    <property name="pointcut" ref="tagPointcut" />
+    <property name="advice" ref="tagAdvice" />
   </bean>
   <bean id="hello" class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target" ref="helloImpl" />
     <property name="interceptorNames">
       <list>
+<!--나중에 등록한 것이 먼저 처리됩니다.-->
         <value>uppercaseAdvisor</value>
+        <value>tagAdvisor</value>
       </list>
     </property>
+  </bean>
+
+  <bean id="introducePointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+    <property name="mappedName" value="introduceY*" />
+  </bean>
+  <bean id="introduceAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+    <property name="advice" ref="uppercaseAdvice"/>
+    <property name="pointcut" ref="introducePointcut" />
   </bean>
   <bean id="introduceImpl" class="study.proxy.target.IntroduceImpl" />
   <bean id="introduce" class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target" ref="introduceImpl" />
     <property name="interceptorNames">
       <list>
-        <value>uppercaseAdvisor</value>
+        <value>introduceAdvisor</value>
       </list>
     </property>
   </bean>
