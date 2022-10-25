@@ -18,6 +18,7 @@
   </bean>
   <bean id="userDao" class="dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>
+    <property name="sqlAdd" value="insert into users(id, name, password, level, login, recommend, email) values(?,?,?,?,?,?,?)"/>
   </bean>
   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
     <property name="dataSource" ref="dataSource"/>

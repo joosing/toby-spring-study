@@ -1,17 +1,21 @@
 package dao;
 
-import java.util.List;
-
-import javax.sql.DataSource;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-
 import pojo.User;
 import service.Level;
 
+import javax.sql.DataSource;
+import java.util.List;
+
 public class UserDaoJdbc implements UserDao{
     private JdbcTemplate jdbcTemplate;
+    private String sqlAdd;
+
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
+
     private final RowMapper<User> userMapper = (rs, rowNum) -> {
         final User user = new User();
         user.setId(rs.getString("id"));
@@ -31,7 +35,7 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void add(User user) {
-        jdbcTemplate.update("insert into users(id, name, password, level, login, recommend, email) values(?,?,?,?,?,?,?)",
+        jdbcTemplate.update(sqlAdd,
                             user.getId(), user.getName(), user.getPassword(),
                             user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
