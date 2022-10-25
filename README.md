@@ -38,3 +38,10 @@
 - [토비의 스프링 | 5장 서비스 추상화 (학습)](https://velog.io/@joosing/toby-spring-5-abstraction-learn)
 - [토비의 스프링 | 5장 서비스 추상화 (읽기모임)](https://velog.io/@joosing/toby-spring-5-service-abstraction-reading-club)
 - [테스트 대역(Double)](https://velog.io/@joosing/test-double)
+
+# 6장 AOP
+
+- [토비의 스프링 | 6장 AOP 발전과정 (학습)](https://velog.io/@joosing/toby-spring-6-aop-history)
+- [토비의 스프링 | 6장 AOP - Transaction (학습)](https://velog.io/@joosing/toby-spring-6-aop-transaction)
+- [토비의 스프링 | 6장 AOP - 더 나은 설계, 테스트](https://velog.io/@joosing/toby-spring-6-aop-better-design-and-test)
+- [토비의 스프링 | 6장 AOP (읽기모임)](https://velog.io/@joosing/toby-spring-6-aop-reading-club)
