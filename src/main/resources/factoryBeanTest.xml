@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+>
+  <!-- aop 네임스페이스 -->
+  <aop:config>
+    <aop:advisor advice-ref="uppercaseAdvice" pointcut="execution(* *..*Impl.*(..))" />
+    <aop:advisor advice-ref="tagAdvice" pointcut="execution(* *..Introducea*.*(..))" />
+  </aop:config>
 
   <!--Target-->
   <bean id="helloImpl" class="study.proxy.target.HelloImpl" />
@@ -16,25 +25,4 @@
   <bean id="tagAdvice" class="study.proxy.advice.TagAdvice">
     <property name="tag" value="said: " />
   </bean>
-
-  <!--Pointcut(AspectJ Expression, 메서드 선정 알고리즘)-->
-  <bean id="uppercasePointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
-    <property name="expression" value="execution(* *..*Impl.*(..))" />
-  </bean>
-  <bean id="tagPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
-    <property name="expression" value="execution(* *..Introduce*.*(..))" />
-  </bean>
-
-  <!--AutoProxyCreator가 참조하는 직접적인 정보-->
-  <bean id="uppercaseAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-    <property name="advice" ref="uppercaseAdvice" />
-    <property name="pointcut" ref="uppercasePointcut" />
-  </bean>
-  <bean id="tagAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-    <property name="pointcut" ref="tagPointcut" />
-    <property name="advice" ref="tagAdvice" />
-  </bean>
-
-  <!--Advisor 인터페이스 빈을 찾아 자동 프록시 생성자-->
-  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 </beans>
