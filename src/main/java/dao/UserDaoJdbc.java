@@ -7,13 +7,14 @@ import service.Level;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao{
     private JdbcTemplate jdbcTemplate;
-    private String sqlAdd;
+    private Map<String, String> sqlMap;
 
-    public void setSqlAdd(String sqlAdd) {
-        this.sqlAdd = sqlAdd;
+    public void setSqlMap(Map<String, String> sqlMap) {
+        this.sqlMap = sqlMap;
     }
 
     private final RowMapper<User> userMapper = (rs, rowNum) -> {
@@ -35,7 +36,7 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void add(User user) {
-        jdbcTemplate.update(sqlAdd,
+        jdbcTemplate.update(sqlMap.get("add"),
                             user.getId(), user.getName(), user.getPassword(),
                             user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
@@ -43,31 +44,29 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id);
+        return jdbcTemplate.queryForObject(sqlMap.get("get"), userMapper, id);
     }
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update("""
-                                update users set name = ?, password = ?, level = ?,
-                                login = ?, recommend = ?, email = ? where id = ?""",
-                                user.getName(), user.getPassword(), user.getLevel().intValue(),
-                                user.getLogin(), user.getRecommend(), user.getEmail(),
-                                user.getId());
+        jdbcTemplate.update(sqlMap.get("update"),
+                user.getName(), user.getPassword(), user.getLevel().intValue(),
+                user.getLogin(), user.getRecommend(), user.getEmail(),
+                user.getId());
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("select * from users order by id", userMapper);
+        return jdbcTemplate.query(sqlMap.get("getAll"), userMapper);
     }
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update("delete from users");
+        jdbcTemplate.update(sqlMap.get("deleteAll"));
     }
 
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        return jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
     }
 }
