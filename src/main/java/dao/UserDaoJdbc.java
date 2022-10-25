@@ -4,17 +4,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import pojo.User;
 import service.Level;
+import sql.SqlService;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 
 public class UserDaoJdbc implements UserDao{
     private JdbcTemplate jdbcTemplate;
-    private Map<String, String> sqlMap;
+    private SqlService sqlService;
 
-    public void setSqlMap(Map<String, String> sqlMap) {
-        this.sqlMap = sqlMap;
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     private final RowMapper<User> userMapper = (rs, rowNum) -> {
@@ -36,7 +36,7 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void add(User user) {
-        jdbcTemplate.update(sqlMap.get("add"),
+        jdbcTemplate.update(sqlService.getSql("userAdd"),
                             user.getId(), user.getName(), user.getPassword(),
                             user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
@@ -44,12 +44,12 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject(sqlMap.get("get"), userMapper, id);
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGet"), userMapper, id);
     }
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update(sqlMap.get("update"),
+        jdbcTemplate.update(sqlService.getSql("userUpdate"),
                 user.getName(), user.getPassword(), user.getLevel().intValue(),
                 user.getLogin(), user.getRecommend(), user.getEmail(),
                 user.getId());
@@ -57,16 +57,17 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query(sqlMap.get("getAll"), userMapper);
+        return jdbcTemplate.query(sqlService.getSql("userGetAll"), userMapper);
     }
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update(sqlMap.get("deleteAll"));
+        jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGetCount"), Integer.class);
     }
 }
