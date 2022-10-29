@@ -24,7 +24,7 @@ public class JaxbXmlSqlReader implements SqlReader {
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = getClass().getResourceAsStream('/' + sqlmapFile);
+            InputStream is = getClass().getResourceAsStream("/oxm/" + sqlmapFile);
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
