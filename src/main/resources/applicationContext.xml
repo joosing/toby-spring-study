@@ -19,12 +19,12 @@
   <bean id="sqlReader" class="sql.JaxbXmlSqlReader">
     <property name="sqlmapFile" value="sqlmap.xml"/>
   </bean>
-  <bean id="sqlRegistry" class="sql.HashMapSqlRegistry"/>
   <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
     <property name="contextPath" value="sql.jaxb"/>
   </bean>
   <bean id="sqlService" class="sql.OxmSqlService">
     <property name="unmarshaller" ref="unmarshaller"/>
+    <property name="sqlmap" value="classpath:/oxm/sqlmap.xml"/>
   </bean>
   <bean id="userDao" class="dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>
