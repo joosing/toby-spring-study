@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -13,14 +14,20 @@ import sql.jaxb.Sqlmap;
 
 public class XmlSqlService implements SqlService {
     private final Map<String, String> sqlMap = new HashMap<>();
+    private String sqlmapFile;
 
-    public XmlSqlService() throws JAXBException {
+    public void setSqlmapFile(String sqlmapFile) {
+        this.sqlmapFile = sqlmapFile;
+    }
+
+    @PostConstruct
+    public void loadSql() throws JAXBException {
         String contextPath = Sqlmap.class.getPackage().getName();
         System.out.println("contextPath = " + contextPath);
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = getClass().getResourceAsStream("/sqlmap.xml");
+            InputStream is = getClass().getResourceAsStream('/' + sqlmapFile);
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
