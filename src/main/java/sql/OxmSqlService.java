@@ -12,6 +12,7 @@ import sql.jaxb.SqlType;
 import sql.jaxb.Sqlmap;
 
 public class OxmSqlService implements SqlService {
+    private final BaseSqlService baseSqlService = new BaseSqlService();
     private final OxmSqlReader sqlReader= new OxmSqlReader();
     private SqlRegistry sqlRegistry = new HashMapSqlRegistry();
 
@@ -25,6 +26,20 @@ public class OxmSqlService implements SqlService {
 
     public void setSqlRegistry(SqlRegistry sqlRegistry) {
         this.sqlRegistry = sqlRegistry;
+    }
+
+    @PostConstruct
+    @Override
+    public void loadSql() {
+        baseSqlService.setSqlReader(sqlReader);
+        baseSqlService.setSqlRegistry(sqlRegistry);
+
+        baseSqlService.loadSql();
+    }
+
+    @Override
+    public String getSql(String key) throws SqlRetrievalFailureException {
+        return baseSqlService.getSql(key);
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -53,16 +68,5 @@ public class OxmSqlService implements SqlService {
                throw new IllegalArgumentException(sqlmapFile + "을 가져올 수 없습니다.", e);
            }
         }
-    }
-
-    @PostConstruct
-    @Override
-    public void loadSql() {
-        sqlReader.read(sqlRegistry);
-    }
-
-    @Override
-    public String getSql(String key) throws SqlRetrievalFailureException {
-        return sqlRegistry.findSql(key);
     }
 }
