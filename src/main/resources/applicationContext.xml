@@ -16,10 +16,13 @@
     <property name="username" value="follower"/>
     <property name="password" value="hello"/>
   </bean>
-  <bean id="sqlService" class="sql.XmlSqlService">
+  <bean id="sqlReader" class="sql.JaxbXmlSqlReader">
     <property name="sqlmapFile" value="sqlmap.xml"/>
-    <property name="sqlReader" ref="sqlService"/>
-    <property name="sqlRegistry" ref="sqlService"/>
+  </bean>
+  <bean id="sqlRegistry" class="sql.HashMapSqlRegistry"/>
+  <bean id="sqlService" class="sql.BaseSqlService">
+    <property name="sqlReader" ref="sqlReader"/>
+    <property name="sqlRegistry" ref="sqlRegistry"/>
   </bean>
   <bean id="userDao" class="dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>

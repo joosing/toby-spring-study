@@ -12,6 +12,7 @@ import javax.xml.bind.Unmarshaller;
 import sql.jaxb.SqlType;
 import sql.jaxb.Sqlmap;
 
+@SuppressWarnings("DuplicatedCode")
 public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
     private final Map<String, String> sqlMap = new HashMap<>();
     private String sqlmapFile;
@@ -31,7 +32,8 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
     }
 
     @PostConstruct
-    public void loadSql() throws JAXBException {
+    @Override
+    public void loadSql() {
         sqlReader.read(sqlRegistry);
     }
 
@@ -43,7 +45,6 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
     @Override
     public void read(SqlRegistry sqlRegistry) {
         String contextPath = Sqlmap.class.getPackage().getName();
-        System.out.println("contextPath = " + contextPath);
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();

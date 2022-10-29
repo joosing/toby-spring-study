@@ -1,7 +1,8 @@
 package sql;
 
 @SuppressWarnings("ThrowsRuntimeException")
-@FunctionalInterface
 public interface SqlService {
+
+    void loadSql();
     String getSql(String key) throws SqlRetrievalFailureException;
 }
