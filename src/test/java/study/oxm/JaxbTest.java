@@ -21,7 +21,7 @@ public class JaxbTest {
         Unmarshaller unmarshaller = context.createUnmarshaller(); // JAXBContext로부터 언마샬러를 만든다.
 
         Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(
-                getClass().getResourceAsStream("/testSqlMap.xml")); // 언마샬러로 XML 파일을 객체로 변환한다.
+                getClass().getResourceAsStream("/oxm/testSqlMap.xml")); // 언마샬러로 XML 파일을 객체로 변환한다.
 
         List<SqlType> sqlList = sqlmap.getSql();
 

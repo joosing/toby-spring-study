@@ -18,7 +18,7 @@ import sql.jaxb.SqlType;
 import sql.jaxb.Sqlmap;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
-@ContextConfiguration(locations="/oxmTest.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
+@ContextConfiguration(locations= "/oxm/oxmTest.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
 public class OxmTest {
     @Autowired
     Unmarshaller unmarshaller;
@@ -26,7 +26,7 @@ public class OxmTest {
     @Test
     public void unmarshallSqlMap() throws Exception {
         // XML 소스 정보를 담고 있는 추상화 객체
-        Source xmlSource = new StreamSource(getClass().getResourceAsStream("/testSqlMap.xml"));
+        Source xmlSource = new StreamSource(getClass().getResourceAsStream("/oxm/testSqlMap.xml"));
 
         Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(xmlSource);
 
