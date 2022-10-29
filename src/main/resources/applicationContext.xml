@@ -18,6 +18,8 @@
   </bean>
   <bean id="sqlService" class="sql.XmlSqlService">
     <property name="sqlmapFile" value="sqlmap.xml"/>
+    <property name="sqlReader" ref="sqlService"/>
+    <property name="sqlRegistry" ref="sqlService"/>
   </bean>
   <bean id="userDao" class="dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>
