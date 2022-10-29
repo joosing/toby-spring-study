@@ -89,5 +89,10 @@
       <artifactId>javassist</artifactId>
       <version>3.25.0-GA</version>
     </dependency>
+    <dependency>
+      <groupId>com.sun.istack</groupId>
+      <artifactId>istack-commons-runtime</artifactId>
+      <version>4.1.1</version>
+    </dependency>
   </dependencies>
 </project>
