@@ -253,7 +253,7 @@
     <inspection_tool class="MultipleTypedDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NegatedConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NegatedEqualityExpression" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="NewClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="NewClassNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
       <extension name="JUnitTestClassNamingConvention" enabled="true">
         <option name="m_regex" value="[A-Z][A-Za-z\d]*(Test([Ss]uite)?|Benchmark|Microbenchmark|Verification)[0-9]*" />
         <option name="m_minLength" value="8" />
