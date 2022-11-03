@@ -3,12 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"
 >
   <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
     <property name="driverClass" value="org.postgresql.Driver"/>
@@ -22,9 +23,13 @@
   <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
     <property name="contextPath" value="sql.jaxb"/>
   </bean>
+  <bean id="sqlRegistry" class="sql.EmbeddedDbSqlRegistry">
+    <property name="dataSource" ref="embeddedDatabase"/>
+  </bean>
   <bean id="sqlService" class="sql.OxmSqlService">
     <property name="unmarshaller" ref="unmarshaller"/>
     <property name="sqlmap" value="classpath:/oxm/sqlmap.xml"/>
+    <property name="sqlRegistry" ref="sqlRegistry"/>
   </bean>
   <bean id="userDao" class="dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>
@@ -49,4 +54,7 @@
   </bean>
   <tx:annotation-driven/>
   <context:annotation-config/>
+  <jdbc:embedded-database id="embeddedDatabase" type="H2">
+    <jdbc:script location="classpath:/sql/sqlRegistrySchema.sql"/>
+  </jdbc:embedded-database>
 </beans>

@@ -344,7 +344,6 @@
     <inspection_tool class="SbtFileStructure" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SerialVersionUIDNotStaticFinal" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreAnonymousInnerClasses" value="false" />
       <option name="superClassString" value="" />
     </inspection_tool>
     <inspection_tool class="SerializableWithUnconstructableAncestor" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -362,6 +361,9 @@
       <option name="processCode" value="true" />
       <option name="processLiterals" value="true" />
       <option name="processComments" value="true" />
+    </inspection_tool>
+    <inspection_tool class="SpringFacetInspection" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="checkTestFiles" value="false" />
     </inspection_tool>
     <inspection_tool class="StaticCallOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticFieldReferenceOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -493,7 +495,7 @@
     <inspection_tool class="osmorcMisspelledHeaderName" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="osmorcNonOsgiMavenDependency" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="osmorcUnregisteredActivator" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true" klass="packageLocal" inner_class="protected" field="protected" method="protected">
+    <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="true" klass="packageLocal" inner_class="protected" field="protected" method="protected" checkParameterExcludingHierarchy="false">
       <option name="LOCAL_VARIABLE" value="true" />
       <option name="FIELD" value="true" />
       <option name="METHOD" value="true" />
