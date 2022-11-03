@@ -2,6 +2,10 @@ package sql;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -9,9 +13,12 @@ import java.util.Map;
 @SuppressWarnings("SqlResolve")
 public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
     private JdbcTemplate jdbcTemplate;
+    private TransactionTemplate transactionTemplate;
 
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
+        transactionTemplate = new TransactionTemplate(
+                new DataSourceTransactionManager(dataSource));
     }
 
     @Override
@@ -38,8 +45,13 @@ public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
     @Override
     public void updateSql(Map<String, String> sqlmap) throws SqlRetrievalFailureException {
-        for (Map.Entry<String, String> entry : sqlmap.entrySet()) {
-            updateSql(entry.getKey(), entry.getValue());
-        }
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                for (Map.Entry<String, String> entry : sqlmap.entrySet()) {
+                    updateSql(entry.getKey(), entry.getValue());
+                }
+            }
+        });
     }
 }

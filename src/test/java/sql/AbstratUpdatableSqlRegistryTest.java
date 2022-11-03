@@ -33,7 +33,7 @@ public abstract class AbstratUpdatableSqlRegistryTest {
 
     @Test
     public void updateSingle() {
-        sqlRegistry.updateSql("KEY2", "Modified2");
+         sqlRegistry.updateSql("KEY2", "Modified2");
         checkFind("SQL1", "Modified2", "SQL3");
     }
 
