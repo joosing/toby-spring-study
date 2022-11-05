@@ -2,7 +2,6 @@ package sql;
 
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -30,12 +29,10 @@ public class OxmSqlService implements SqlService {
         this.sqlRegistry = sqlRegistry;
     }
 
-    @PostConstruct
     @Override
     public void loadSql() {
         baseSqlService.setSqlReader(sqlReader);
         baseSqlService.setSqlRegistry(sqlRegistry);
-
         baseSqlService.loadSql();
     }
 

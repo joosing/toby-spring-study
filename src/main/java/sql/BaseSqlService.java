@@ -1,7 +1,5 @@
 package sql;
 
-import javax.annotation.PostConstruct;
-
 public class BaseSqlService implements SqlService {
     private SqlReader sqlReader;
     private SqlRegistry sqlRegistry;
@@ -14,7 +12,6 @@ public class BaseSqlService implements SqlService {
         this.sqlRegistry = sqlRegistry;
     }
 
-    @PostConstruct
     @Override
     public void loadSql() {
         sqlReader.read(sqlRegistry);

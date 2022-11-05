@@ -12,17 +12,20 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import config.TestApplicationContext;
 import study.proxy.advice.UppercaseAdvice;
 import study.proxy.invocation.UpperCaseHandler;
 import study.proxy.proxy.HelloUppercase;
 import study.proxy.target.Hello;
 import study.proxy.target.HelloImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
-@ContextConfiguration(locations= "/testContext.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestApplicationContext.class)
+@ImportResource("/testContext.xml")
 public class ProxyTest {
     @Autowired
     ApplicationContext context;

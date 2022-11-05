@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -33,15 +32,12 @@ import pojo.User;
 import service.mock.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
-@ContextConfiguration(classes = { TestApplicationContext.class })
-@ImportResource("/testContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserServiceTest {
     @Autowired
     UserService userService;
     @Autowired
     UserService testUserService;
-    @Autowired
-    UserService transactionTestUserService;
     @Autowired
     UserDao userDao;
     @Autowired
@@ -159,7 +155,7 @@ public class UserServiceTest {
         users.forEach(user -> userDao.add(user));
 
         try {
-            Objects.requireNonNull(transactionTestUserService).upgradeLevels();
+            Objects.requireNonNull(testUserService).upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
 
@@ -177,13 +173,13 @@ public class UserServiceTest {
     @Test
     public void userServiceNotEqualsToTestUserService() {
         System.out.println(userService);
-        System.out.println(transactionTestUserService);
-        Assertions.assertNotEquals(userService, transactionTestUserService);
+        System.out.println(testUserService);
+        Assertions.assertNotEquals(userService, testUserService);
     }
 
     @Test
     public void testUserServiceInstanceOfProxsy() {
-        Assertions.assertTrue(transactionTestUserService instanceof Proxy);
+        Assertions.assertTrue(testUserService instanceof Proxy);
     }
 
     @Transactional
@@ -222,7 +218,7 @@ public class UserServiceTest {
     /**
      * 클래스 선정 PointCut 테스트를 위한 클래스
      */
-    static class TestUserServiceImpl extends UserServiceImpl {
+    public static class TestUserServiceImpl extends UserServiceImpl {
         @Override
         public List<User> getAll() {
             for (User user : super.getAll()) {
@@ -232,13 +228,7 @@ public class UserServiceTest {
         }
     }
 
-    static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
-
-        // TODO : 왜 구성 파일에서 주입받지 못하는지 확인
-//        public void setId(String id) {
-//            this.id = id;
-//        }
-
+    public static class TestUserLevelUpgradePolicy extends GeneralUserLevelUpgradePolicy {
         @Override
         public void upgrade(User user) {
             String id = "madnite1";
@@ -247,7 +237,7 @@ public class UserServiceTest {
         }
     }
 
-    static class TestUserServiceException extends RuntimeException {
+    public static class TestUserServiceException extends RuntimeException {
         @Serial
         private static final long serialVersionUID = -1962780078733550838L;
     }

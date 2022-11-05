@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
@@ -22,9 +21,9 @@ import config.TestApplicationContext;
 import pojo.User;
 import service.Level;
 
+@SuppressWarnings("ConstantConditions")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestApplicationContext.class })
-@ImportResource("/testContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserDaoTest {
     @Autowired
     private UserDao dao;
