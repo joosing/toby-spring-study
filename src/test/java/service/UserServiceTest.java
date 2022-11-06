@@ -26,13 +26,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
-import config.TestApplicationContext;
+import config.AppContect;
+import config.TestAppContect;
 import dao.UserDao;
 import pojo.User;
 import service.mock.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
-@ContextConfiguration(classes = TestApplicationContext.class)
+
+@ContextConfiguration(classes = { AppContect.class, TestAppContect.class })
 public class UserServiceTest {
     @Autowired
     UserService userService;

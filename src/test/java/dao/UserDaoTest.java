@@ -17,13 +17,14 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import config.TestApplicationContext;
+import config.AppContect;
+import config.TestAppContect;
 import pojo.User;
 import service.Level;
 
 @SuppressWarnings("ConstantConditions")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = { AppContect.class, TestAppContect.class })
 public class UserDaoTest {
     @Autowired
     private UserDao dao;

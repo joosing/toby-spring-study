@@ -10,17 +10,12 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.mail.MailSender;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import dao.UserDao;
-import service.UserService;
-import service.UserServiceTest.TestUserLevelUpgradePolicy;
-import service.UserServiceTest.TestUserServiceImpl;
-import service.mock.DummyMailSender;
 import sql.EmbeddedDbSqlRegistry;
 import sql.OxmSqlService;
 import sql.SqlRegistry;
@@ -29,7 +24,7 @@ import sql.SqlService;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"dao", "service"})
-public class TestApplicationContext {
+public class AppContect {
     @Autowired
     UserDao userDao;
 
@@ -49,27 +44,6 @@ public class TestApplicationContext {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource());
         transactionManager.setDataSource(dataSource());
         return transactionManager;
-    }
-
-    @Bean
-    public UserService testUserService() {
-        TestUserServiceImpl userService = new TestUserServiceImpl();
-        userService.setUserDao(userDao);
-        userService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy());
-        return userService;
-    }
-
-    @Bean
-    public TestUserLevelUpgradePolicy testUserLevelUpgradePolicy() {
-        TestUserLevelUpgradePolicy userLevelUpgradePolicy = new TestUserLevelUpgradePolicy();
-        userLevelUpgradePolicy.setUserDao(userDao);
-        userLevelUpgradePolicy.setMailSender(mailSender());
-        return userLevelUpgradePolicy;
-    }
-
-    @Bean
-    public MailSender mailSender() {
-        return new DummyMailSender();
     }
 
     @Bean
