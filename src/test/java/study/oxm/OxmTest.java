@@ -11,14 +11,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Unmarshaller;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import config.AppContext;
+import config.TestAppContect;
 import sql.jaxb.SqlType;
 import sql.jaxb.Sqlmap;
 
-@RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
-@ContextConfiguration(locations= "/oxmTest.xml") // 테스트 컨텍스트가 자동으로 만들어줄 애플리케이션 컨텍스트의 위치 지정
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { AppContext.class, TestAppContect.class })
+@ActiveProfiles("test")
 public class OxmTest {
     @Autowired
     Unmarshaller unmarshaller;
