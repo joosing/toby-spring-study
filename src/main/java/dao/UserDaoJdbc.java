@@ -1,21 +1,22 @@
 package dao;
 
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
 import pojo.User;
 import service.Level;
 import sql.SqlService;
 
-import javax.sql.DataSource;
-import java.util.List;
-
+@Component
 public class UserDaoJdbc implements UserDao{
     private JdbcTemplate jdbcTemplate;
     private SqlService sqlService;
-
-    public void setSqlService(SqlService sqlService) {
-        this.sqlService = sqlService;
-    }
 
     private final RowMapper<User> userMapper = (rs, rowNum) -> {
         final User user = new User();
@@ -29,6 +30,12 @@ public class UserDaoJdbc implements UserDao{
         return user;
     };
 
+    @Autowired
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
+    }
+
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(); // 인상적인 직접 생성, 수동 DI 장면이다.
         jdbcTemplate.setDataSource(dataSource);

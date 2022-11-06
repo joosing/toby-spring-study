@@ -1,23 +1,27 @@
 package service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
 
 import dao.UserDao;
 import pojo.User;
 
+@Component("userLevelUpgradePolicy")
 public class GeneralUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
+    public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
+    public static final int MIN_RECOMMEND_COUNT_FOR_GOLD = 30;
     private UserDao userDao;
     private MailSender mailSender;
 
+    @Autowired
     @Override
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
     }
 
-    public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
-    public static final int MIN_RECOMMEND_COUNT_FOR_GOLD = 30;
-
+    @Autowired
     @Override
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;

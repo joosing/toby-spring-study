@@ -2,7 +2,9 @@ package config;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -15,10 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import dao.UserDao;
-import dao.UserDaoJdbc;
-import service.GeneralUserLevelUpgradePolicy;
 import service.UserService;
-import service.UserServiceImpl;
 import service.UserServiceTest.TestUserLevelUpgradePolicy;
 import service.UserServiceTest.TestUserServiceImpl;
 import service.mock.DummyMailSender;
@@ -29,7 +28,11 @@ import sql.SqlService;
 
 @Configuration
 @EnableTransactionManagement
+@ComponentScan(basePackages = {"dao", "service"})
 public class TestApplicationContext {
+    @Autowired
+    UserDao userDao;
+
     @Bean
     public DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -49,33 +52,9 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public UserDao userDao() {
-        UserDaoJdbc userDao = new UserDaoJdbc();
-        userDao.setDataSource(dataSource());
-        userDao.setSqlService(sqlService());
-        return userDao;
-    }
-
-    @Bean
-    public UserService userService() {
-        UserServiceImpl userService = new UserServiceImpl();
-        userService.setUserDao(userDao());
-        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
-        return userService;
-    }
-
-    @Bean
-    public GeneralUserLevelUpgradePolicy userLevelUpgradePolicy() {
-        GeneralUserLevelUpgradePolicy userLevelUpgradePolicy = new GeneralUserLevelUpgradePolicy();
-        userLevelUpgradePolicy.setUserDao(userDao());
-        userLevelUpgradePolicy.setMailSender(mailSender());
-        return userLevelUpgradePolicy;
-    }
-
-    @Bean
     public UserService testUserService() {
         TestUserServiceImpl userService = new TestUserServiceImpl();
-        userService.setUserDao(userDao());
+        userService.setUserDao(userDao);
         userService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy());
         return userService;
     }
@@ -83,7 +62,7 @@ public class TestApplicationContext {
     @Bean
     public TestUserLevelUpgradePolicy testUserLevelUpgradePolicy() {
         TestUserLevelUpgradePolicy userLevelUpgradePolicy = new TestUserLevelUpgradePolicy();
-        userLevelUpgradePolicy.setUserDao(userDao());
+        userLevelUpgradePolicy.setUserDao(userDao);
         userLevelUpgradePolicy.setMailSender(mailSender());
         return userLevelUpgradePolicy;
     }
@@ -93,6 +72,7 @@ public class TestApplicationContext {
         return new DummyMailSender();
     }
 
+    @Bean
     public SqlService sqlService() {
         OxmSqlService sqlService = new OxmSqlService();
         sqlService.setUnmarshaller(unmarshaller());
@@ -101,6 +81,7 @@ public class TestApplicationContext {
         return sqlService;
     }
 
+    @Bean
     public SqlRegistry sqlRegistry() {
         EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
         sqlRegistry.setDataSource(embeddedDatabase());
@@ -116,6 +97,7 @@ public class TestApplicationContext {
                 .build();
     }
 
+    @Bean
     public Unmarshaller unmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath("sql.jaxb");

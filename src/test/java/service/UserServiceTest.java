@@ -220,6 +220,11 @@ public class UserServiceTest {
      */
     public static class TestUserServiceImpl extends UserServiceImpl {
         @Override
+        public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy testUserLevelUpgradePolicy) {
+            super.setUserLevelUpgradePolicy(testUserLevelUpgradePolicy);
+        }
+
+        @Override
         public List<User> getAll() {
             for (User user : super.getAll()) {
                 update(user);
