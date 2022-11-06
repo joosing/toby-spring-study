@@ -17,8 +17,8 @@ import dao.UserDao;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"dao", "service"})
-@Import(SqlServiceContext.class)
-public class AppContect {
+@Import({SqlServiceContext.class, ProductionAppContext.class})
+public class AppContext {
     @Autowired
     UserDao userDao;
 

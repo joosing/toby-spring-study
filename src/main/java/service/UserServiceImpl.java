@@ -21,9 +21,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
         this.userLevelUpgradePolicy = userLevelUpgradePolicy;
-        System.out.println(this);
-        System.out.println(userLevelUpgradePolicy);
-        System.out.println(userDao);
     }
 
     @Override

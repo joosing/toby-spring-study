@@ -12,10 +12,11 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import config.AppContect;
+import config.AppContext;
 import config.TestAppContect;
 import study.proxy.advice.UppercaseAdvice;
 import study.proxy.invocation.UpperCaseHandler;
@@ -24,7 +25,8 @@ import study.proxy.target.Hello;
 import study.proxy.target.HelloImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContect.class, TestAppContect.class })
+@ContextConfiguration(classes = { AppContext.class, TestAppContect.class })
+@ActiveProfiles("test")
 public class ProxyTest {
     @Autowired
     ApplicationContext context;

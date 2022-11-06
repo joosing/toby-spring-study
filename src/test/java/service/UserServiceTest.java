@@ -21,12 +21,13 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
-import config.AppContect;
+import config.AppContext;
 import config.TestAppContect;
 import dao.UserDao;
 import pojo.User;
@@ -34,7 +35,8 @@ import service.mock.MockMailSender;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 스프링의 테스트 컨텍스트 프레임워크의 JUnit 확장기능 지정
 
-@ContextConfiguration(classes = { AppContect.class, TestAppContect.class })
+@ContextConfiguration(classes = { AppContext.class, TestAppContect.class })
+@ActiveProfiles("test")
 public class UserServiceTest {
     @Autowired
     UserService userService;

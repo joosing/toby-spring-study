@@ -14,17 +14,19 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import config.AppContect;
+import config.AppContext;
 import config.TestAppContect;
 import pojo.User;
 import service.Level;
 
 @SuppressWarnings("ConstantConditions")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContect.class, TestAppContect.class })
+@ContextConfiguration(classes = { AppContext.class, TestAppContect.class })
+@ActiveProfiles("test")
 public class UserDaoTest {
     @Autowired
     private UserDao dao;
