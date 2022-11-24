@@ -45,3 +45,14 @@
 - [토비의 스프링 | 6장 AOP - Transaction (학습)](https://velog.io/@joosing/toby-spring-6-aop-transaction)
 - [토비의 스프링 | 6장 AOP - 더 나은 설계, 테스트](https://velog.io/@joosing/toby-spring-6-aop-better-design-and-test)
 - [토비의 스프링 | 6장 AOP (읽기모임)](https://velog.io/@joosing/toby-spring-6-aop-reading-club)
+
+# 7장 스프링 핵심 기술의 응용
+
+- [토비의 스프링 | 7장 스프링 핵심 기술의 응용 (SQL 쿼리문을 코드에서 분리해 보자)](https://velog.io/@joosing/toby-spring-7-separate-sql-from-dao)  
+- [토비의 스프링 | 7장 스프링 핵심 기술의 응용 (SQL 쿼리문을 동적으로 변경해 보자)](https://velog.io/@joosing/toby-spring-7-update-sql-query)  
+- [토비의 스프링 | 7장 스프링 핵심 기술의 응용 (읽기 모임)](https://velog.io/@joosing/toby-spring-7-reading-club)  
+- [토비의 스프링 | 7장 스프링 핵심 기술의 응용 (여러가지 배운것)](https://velog.io/@joosing/toby-spring-7-etc)  
+
+# 8장 
+- [토비의 스프링 | 8장 스프링이란 무엇인가? (학습)](https://velog.io/@joosing/toby-spring-8-what-is-spring)  
+- [토비의 스프링 | 8장 스프링이란 무엇인가? (읽기모임)](https://velog.io/@joosing/toby-spring-8-reading-club)  
